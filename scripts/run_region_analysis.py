@@ -49,10 +49,11 @@ def run_policy_for_region(region, project_id, env="dev"):
         venv_dir = os.path.join(base_dir, "venv")
         custodian_cmd = os.path.join(venv_dir, "bin", "custodian")
         
-        # Run the policy
+        # Run the policy in dryrun mode
         cmd = [
             custodian_cmd, 
             "run", 
+            "--dryrun",
             "--output-dir", output_dir,
             temp_policy_path
         ]

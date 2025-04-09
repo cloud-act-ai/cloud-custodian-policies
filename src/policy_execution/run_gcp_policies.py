@@ -48,9 +48,10 @@ def run_custodian(policy_file, output_dir, config):
     venv_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'venv')
     custodian_cmd = os.path.join(venv_dir, 'bin', 'custodian')
     
-    # Construct the custodian command
+    # Construct the custodian command with dryrun flag to prevent action execution
     cmd = [
         custodian_cmd, 'run',
+        '--dryrun',
         '--output-dir', output_dir,
         policy_file
     ]

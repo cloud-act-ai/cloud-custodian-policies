@@ -1,0 +1,82 @@
+{
+  "policy": {
+    "name": "gcp-vm-missing-required-labels",
+    "resource": "gcp.instance",
+    "description": "Identifies Google Compute Engine instances (VMs) that are missing required labels.\nRequired labels help with cost allocation, ownership tracking, and resource governance.\nThis policy checks for the absence of 'env' and 'owner' labels.\n",
+    "filters": [
+      {
+        "or": [
+          {
+            "type": "value",
+            "key": "labels",
+            "value": null
+          },
+          {
+            "type": "value",
+            "key": "labels.env",
+            "value": null
+          },
+          {
+            "type": "value",
+            "key": "labels.owner",
+            "value": null
+          }
+        ]
+      }
+    ]
+  },
+  "version": "0.9.43",
+  "execution": {
+    "id": "39c24bcd-fb29-4c4a-842b-6f97d814f371",
+    "start": 1744230188.831538,
+    "end_time": 1744230189.6615858,
+    "duration": 0.8300478458404541
+  },
+  "config": {
+    "region": "",
+    "regions": [],
+    "cache": "~/.cache/cloud-custodian.cache",
+    "profile": null,
+    "account_id": null,
+    "assume_role": null,
+    "session_policy": null,
+    "external_id": null,
+    "log_group": null,
+    "tracer": null,
+    "metrics_enabled": null,
+    "metrics": null,
+    "output_dir": "output/gcp/dev/compute/20250409_132308",
+    "cache_period": 15,
+    "dryrun": true,
+    "authorization_file": null,
+    "subparser": "run",
+    "config": null,
+    "configs": [
+      "c7n_policies/gcp/dev/compute_policies.yaml"
+    ],
+    "policy_filters": [],
+    "resource_types": [],
+    "verbose": null,
+    "quiet": null,
+    "debug": false,
+    "skip_validation": false,
+    "command": "c7n.commands.run",
+    "vars": null
+  },
+  "sys-stats": {},
+  "api-stats": {},
+  "metrics": [
+    {
+      "MetricName": "ResourceCount",
+      "Timestamp": "2025-04-09T13:23:09.660523",
+      "Value": 1,
+      "Unit": "Count"
+    },
+    {
+      "MetricName": "ResourceTime",
+      "Timestamp": "2025-04-09T13:23:09.660542",
+      "Value": 0.828240156173706,
+      "Unit": "Seconds"
+    }
+  ]
+}

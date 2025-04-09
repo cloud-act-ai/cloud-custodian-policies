@@ -17,29 +17,29 @@ policies:
             key: tableReference.tableId
             op: regex
             value: '^(archive|backup|temp|test).*'
-    actions:
-      - type: notify
-        to:
-          - dataops@example.com
-        format: json
-        subject: 'BigQuery Table Not Accessed (30+ days): {tableReference.tableId}'
-        body: |
-          BigQuery table {tableReference.tableId} in dataset {tableReference.datasetId} 
-          has not been accessed in over 30 days. Consider reviewing usage patterns
-          of this table.
-          
-          Last modified: {lastModifiedTime}
-          Table ID: {id}
-          Project: {project_id}
-          Dataset: {tableReference.datasetId}
-          Size: {numBytes} bytes
-          
-          This notification is for early monitoring purposes. Tables not accessed for
-          90+ days will be flagged for potential archiving.
-        transport:
-          type: pubsub
-          topic: projects/{project_id}/topics/custodian-notifications
 
+  # Find BigQuery datasets missing required labels
+  - name: bigquery-datasets-missing-labels
+    resource: gcp.bq-dataset
+    description: |
+      Identifies BigQuery datasets that are missing required labels.
+      Required labels help with cost allocation, ownership tracking, and resource governance.
+      This policy checks for the absence of 'env', 'owner', and 'department' labels.
+    filters:
+      - or:
+        - type: value
+          key: labels
+          value: null
+        - type: value
+          key: labels.env
+          value: null
+        - type: value
+          key: labels.owner
+          value: null
+        - type: value
+          key: labels.department
+          value: null
+          
   # Find BigQuery datasets older than 30 days without access logs
   - name: bigquery-datasets-without-logging
     resource: gcp.bq-dataset
@@ -61,15 +61,6 @@ policies:
       - type: value
         key: access_logs.logBigqueryAuditMetadata
         value: false
-    actions:
-      - type: notify
-        to:
-          - dataops@example.com
-        format: json
-        subject: 'BigQuery Dataset without Access Logging: {datasetReference.datasetId}'
-        transport:
-          type: pubsub
-          topic: projects/{project_id}/topics/custodian-notifications
 
   # Find idle BigQuery tables (not accessed in the last 90 days)
   - name: bigquery-idle-tables
@@ -88,24 +79,6 @@ policies:
             key: tableReference.tableId
             op: regex
             value: '^(archive|backup).*'
-    actions:
-      - type: notify
-        to:
-          - dataops@example.com
-        format: json
-        subject: 'BigQuery Idle Table Detected: {tableReference.tableId}'
-        body: |
-          BigQuery table {tableReference.tableId} in dataset {tableReference.datasetId} 
-          has not been accessed in over 90 days. Consider archiving this table to 
-          reduce storage costs.
-          
-          Last modified: {lastModifiedTime}
-          Table ID: {id}
-          
-          This table is a candidate for archiving in 30 days.
-        transport:
-          type: pubsub
-          topic: projects/{project_id}/topics/custodian-notifications
 
   # Find large BigQuery tables without partitioning
   - name: bigquery-large-unpartitioned-tables
@@ -121,16 +94,6 @@ policies:
       - type: value
         key: timePartitioning
         value: null
-    actions:
-      - type: notify
-        to:
-          - dataops@example.com
-          - finops@example.com
-        format: json
-        subject: 'BigQuery Large Unpartitioned Table: {tableReference.tableId}'
-        transport:
-          type: pubsub
-          topic: projects/{project_id}/topics/custodian-notifications
           
   # Find and analyze all tables in a specific dataset - Customizable
   - name: bigquery-dataset-analyzer
@@ -142,24 +105,3 @@ policies:
       - type: value
         key: datasetReference.datasetId
         value: "$DATASET_ID"  # Replace with actual dataset ID or use parameter
-    actions:
-      - type: notify
-        to:
-          - dataops@example.com
-        format: json
-        subject: 'BigQuery Dataset Analysis: {datasetReference.datasetId}'
-        body: |
-          Dataset: {datasetReference.datasetId}
-          Location: {location}
-          Created: {creationTime}
-          Default table expiration: {defaultTableExpirationMs}
-          
-          For this dataset, we recommend running the following table-level policies:
-          1. Check for idle tables
-          2. Check for large unpartitioned tables
-          3. Check for tables not accessed in last 30 days
-          
-          Note: These policies will be automatically triggered when this policy runs.
-        transport:
-          type: pubsub
-          topic: projects/{project_id}/topics/custodian-notifications

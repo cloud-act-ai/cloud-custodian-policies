@@ -22,11 +22,15 @@ run-azure:
 
 run-bigquery:
 	@echo "Running only BigQuery policies..."
-	$(CUSTODIAN) run --output-dir output/gcp/dev/bigquery/$(shell date +%Y%m%d_%H%M%S) c7n_policies/gcp/dev/bigquery_policies.yaml
+	$(CUSTODIAN) run --dryrun --output-dir output/gcp/dev/bigquery/$(shell date +%Y%m%d_%H%M%S) c7n_policies/gcp/dev/bigquery_policies.yaml
 
 run-cloudrun:
 	@echo "Running only Cloud Run policies..."
-	$(CUSTODIAN) run --output-dir output/gcp/dev/cloudrun/$(shell date +%Y%m%d_%H%M%S) c7n_policies/gcp/dev/cloudrun_policies.yaml
+	$(CUSTODIAN) run --dryrun --output-dir output/gcp/dev/cloudrun/$(shell date +%Y%m%d_%H%M%S) c7n_policies/gcp/dev/cloudrun_policies.yaml
+	
+run-compute:
+	@echo "Running only Compute Engine (VM) policies..."
+	$(CUSTODIAN) run --dryrun --output-dir output/gcp/dev/compute/$(shell date +%Y%m%d_%H%M%S) c7n_policies/gcp/dev/compute_policies.yaml
 
 run-dataset:
 	@echo "Running BigQuery dataset analysis..."
@@ -39,6 +43,14 @@ run-dataset:
 		exit 1; \
 	fi
 	$(PYTHON) scripts/run_dataset_analysis.py --dataset $(DATASET) --project $(PROJECT)
+	
+run-bq-project:
+	@echo "Analyzing all BigQuery datasets in project..."
+	@if [ -z "$(PROJECT)" ]; then \
+		echo "Error: PROJECT parameter is required. Usage: make run-bq-project PROJECT=your_project_id"; \
+		exit 1; \
+	fi
+	$(PYTHON) scripts/run_project_bigquery_analysis.py --project $(PROJECT)
 
 run-region:
 	@echo "Running Cloud Run region analysis..."
@@ -51,6 +63,18 @@ run-region:
 		exit 1; \
 	fi
 	$(PYTHON) scripts/run_region_analysis.py --region $(REGION) --project $(PROJECT)
+	
+run-vm-tags:
+	@echo "Checking VMs for missing required tags..."
+	@if [ -z "$(PROJECT)" ]; then \
+		echo "Error: PROJECT parameter is required. Usage: make run-vm-tags PROJECT=your_project_id [TAGS='env owner cost-center']"; \
+		exit 1; \
+	fi
+	@if [ -z "$(TAGS)" ]; then \
+		$(PYTHON) scripts/run_vm_tag_check.py --project $(PROJECT); \
+	else \
+		$(PYTHON) scripts/run_vm_tag_check.py --project $(PROJECT) --tags $(TAGS); \
+	fi
 
 run-analysis:
 	@echo "Running cost analysis..."

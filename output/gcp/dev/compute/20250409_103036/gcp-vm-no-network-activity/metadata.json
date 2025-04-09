@@ -1,0 +1,113 @@
+{
+  "policy": {
+    "name": "gcp-vm-no-network-activity",
+    "resource": "gcp.instance",
+    "description": "Identifies Google Compute Engine instances with no network activity (ingress or egress).\nThese VMs might be unused or disconnected and are candidates for termination.\n",
+    "filters": [
+      {
+        "type": "value",
+        "key": "status",
+        "value": "RUNNING"
+      },
+      {
+        "type": "metrics",
+        "name": "compute.googleapis.com/instance/network/received_bytes_count",
+        "metric-key": "resource.labels.instance_id",
+        "days": 7,
+        "reducer": "REDUCE_SUM",
+        "aligner": "ALIGN_SUM",
+        "op": "less-than",
+        "value": 1000
+      },
+      {
+        "type": "metrics",
+        "name": "compute.googleapis.com/instance/network/sent_bytes_count",
+        "metric-key": "resource.labels.instance_id",
+        "days": 7,
+        "reducer": "REDUCE_SUM",
+        "aligner": "ALIGN_SUM",
+        "op": "less-than",
+        "value": 1000
+      },
+      {
+        "not": [
+          {
+            "type": "value",
+            "key": "labels.preserve",
+            "value": "true"
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "type": "notify",
+        "to": [
+          "cloudops@example.com",
+          "finops@example.com"
+        ],
+        "format": "json",
+        "subject": "GCP VM No Network Activity: {name}",
+        "body": "GCP Virtual Machine {name} in project {project_id} has no significant network activity.\n\nVM details:\n- Name: {name}\n- Zone: {zone}\n- Machine Type: {machineType}\n- Status: {status}\n- Created: {creationTimestamp}\n- Labels: {labels}\n\nThis VM has shown virtually no network activity (ingress or egress) in the past 7 days, \nsuggesting it may be unused. Consider stopping or deleting this VM if it's not needed.\n",
+        "transport": {
+          "type": "pubsub",
+          "topic": "projects/{project_id}/topics/custodian-notifications"
+        }
+      }
+    ]
+  },
+  "version": "0.9.43",
+  "execution": {
+    "id": "2c45f893-8b50-49dd-9301-ab34b3bcae97",
+    "start": 1744219840.334211,
+    "end_time": 1744219840.709142,
+    "duration": 0.37493085861206055
+  },
+  "config": {
+    "region": "",
+    "regions": [],
+    "cache": "~/.cache/cloud-custodian.cache",
+    "profile": null,
+    "account_id": null,
+    "assume_role": null,
+    "session_policy": null,
+    "external_id": null,
+    "log_group": null,
+    "tracer": null,
+    "metrics_enabled": null,
+    "metrics": null,
+    "output_dir": "output/gcp/dev/compute/20250409_103036",
+    "cache_period": 15,
+    "dryrun": false,
+    "authorization_file": null,
+    "subparser": "run",
+    "config": null,
+    "configs": [
+      "c7n_policies/gcp/dev/compute_policies.yaml"
+    ],
+    "policy_filters": [],
+    "resource_types": [],
+    "verbose": null,
+    "quiet": null,
+    "debug": false,
+    "skip_validation": false,
+    "command": "c7n.commands.run",
+    "vars": null
+  },
+  "sys-stats": {},
+  "api-stats": {},
+  "metrics": [
+    {
+      "MetricName": "ResourceCount",
+      "Timestamp": "2025-04-09T10:30:40.708920",
+      "Value": 0,
+      "Unit": "Count"
+    },
+    {
+      "MetricName": "ResourceTime",
+      "Timestamp": "2025-04-09T10:30:40.708927",
+      "Value": 0.37404680252075195,
+      "Unit": "Seconds"
+    }
+  ]
+}

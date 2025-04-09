@@ -1,0 +1,43 @@
+2025-04-09 10:30:36,935 - custodian.policy - INFO - policy:gcp-vm-missing-required-labels resource:gcp.instance region: count:1 time:0.00
+2025-04-09 10:30:37,392 - custodian.output - ERROR - Error while executing policy
+Traceback (most recent call last):
+  File "/Users/gurukallam/projects/finops360/cloud-custodian-policies/venv/lib/python3.13/site-packages/c7n/policy.py", line 364, in run
+    results = a.process(resources)
+  File "/Users/gurukallam/projects/finops360/cloud-custodian-policies/venv/lib/python3.13/site-packages/c7n_gcp/actions/notify.py", line 86, in process
+    self.publish_message(message, client)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/gurukallam/projects/finops360/cloud-custodian-policies/venv/lib/python3.13/site-packages/c7n_gcp/actions/notify.py", line 92, in publish_message
+    return client.execute_command('publish', {
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+        'topic': self.data['transport']['topic'],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        }
+        ^
+    })
+    ^^
+  File "/Users/gurukallam/projects/finops360/cloud-custodian-policies/venv/lib/python3.13/site-packages/c7n_gcp/client.py", line 422, in execute_command
+    return self._execute(request)
+           ~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/gurukallam/projects/finops360/cloud-custodian-policies/venv/lib/python3.13/site-packages/retrying.py", line 56, in wrapped_f
+    return Retrying(*dargs, **dkw).call(f, *args, **kw)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/Users/gurukallam/projects/finops360/cloud-custodian-policies/venv/lib/python3.13/site-packages/retrying.py", line 257, in call
+    return attempt.get(self._wrap_exception)
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gurukallam/projects/finops360/cloud-custodian-policies/venv/lib/python3.13/site-packages/retrying.py", line 301, in get
+    six.reraise(self.value[0], self.value[1], self.value[2])
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gurukallam/projects/finops360/cloud-custodian-policies/venv/lib/python3.13/site-packages/six.py", line 724, in reraise
+    raise value
+  File "/Users/gurukallam/projects/finops360/cloud-custodian-policies/venv/lib/python3.13/site-packages/retrying.py", line 251, in call
+    attempt = Attempt(fn(*args, **kwargs), attempt_number, False)
+                      ~~^^^^^^^^^^^^^^^^^
+  File "/Users/gurukallam/projects/finops360/cloud-custodian-policies/venv/lib/python3.13/site-packages/c7n_gcp/client.py", line 505, in _execute
+    return request.execute(http=self.http, num_retries=self._num_retries)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gurukallam/projects/finops360/cloud-custodian-policies/venv/lib/python3.13/site-packages/googleapiclient/_helpers.py", line 130, in positional_wrapper
+    return wrapped(*args, **kwargs)
+  File "/Users/gurukallam/projects/finops360/cloud-custodian-policies/venv/lib/python3.13/site-packages/googleapiclient/http.py", line 938, in execute
+    raise HttpError(resp, content, uri=self.uri)
+googleapiclient.errors.HttpError: <HttpError 400 when requesting https://pubsub.googleapis.com/v1/projects/%7Bproject_id%7D/topics/custodian-notifications:publish?alt=json returned "You have passed an invalid argument to the service (argument={project_id}).". Details: "You have passed an invalid argument to the service (argument={project_id}).">

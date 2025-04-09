@@ -7,8 +7,8 @@ gcp:
   pubsub:
     topic: "custodian-notifications"
   bigquery:
-    dataset: "billing_export"
-    table: "gcp_billing_export_v1"
+    dataset: "test"
+
   
 # Azure Configuration
 azure:

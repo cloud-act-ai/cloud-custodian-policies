@@ -1,0 +1,133 @@
+[
+  {
+    "kind": "compute#instance",
+    "id": "468302234675560994",
+    "creationTimestamp": "2025-04-09T06:57:33.740-07:00",
+    "name": "instance-20250409-135727",
+    "description": "",
+    "tags": {
+      "fingerprint": "42WmSpB8rSM="
+    },
+    "machineType": "https://www.googleapis.com/compute/v1/projects/finops360-dev-2025/zones/us-central1-c/machineTypes/e2-medium",
+    "status": "RUNNING",
+    "zone": "https://www.googleapis.com/compute/v1/projects/finops360-dev-2025/zones/us-central1-c",
+    "canIpForward": false,
+    "networkInterfaces": [
+      {
+        "kind": "compute#networkInterface",
+        "network": "https://www.googleapis.com/compute/v1/projects/finops360-dev-2025/global/networks/default",
+        "subnetwork": "https://www.googleapis.com/compute/v1/projects/finops360-dev-2025/regions/us-central1/subnetworks/default",
+        "networkIP": "10.128.0.19",
+        "name": "nic0",
+        "accessConfigs": [
+          {
+            "kind": "compute#accessConfig",
+            "type": "ONE_TO_ONE_NAT",
+            "name": "External NAT",
+            "natIP": "35.224.48.74",
+            "networkTier": "PREMIUM"
+          }
+        ],
+        "fingerprint": "xDtbxG0K3OI=",
+        "stackType": "IPV4_ONLY"
+      }
+    ],
+    "disks": [
+      {
+        "kind": "compute#attachedDisk",
+        "type": "PERSISTENT",
+        "mode": "READ_WRITE",
+        "source": "https://www.googleapis.com/compute/v1/projects/finops360-dev-2025/zones/us-central1-c/disks/instance-20250409-135727",
+        "deviceName": "instance-20250409-135727",
+        "index": 0,
+        "boot": true,
+        "autoDelete": true,
+        "licenses": [
+          "https://www.googleapis.com/compute/v1/projects/debian-cloud/global/licenses/debian-12-bookworm"
+        ],
+        "interface": "SCSI",
+        "guestOsFeatures": [
+          {
+            "type": "UEFI_COMPATIBLE"
+          },
+          {
+            "type": "VIRTIO_SCSI_MULTIQUEUE"
+          },
+          {
+            "type": "GVNIC"
+          },
+          {
+            "type": "SEV_CAPABLE"
+          },
+          {
+            "type": "SEV_LIVE_MIGRATABLE_V2"
+          }
+        ],
+        "diskSizeGb": "10",
+        "architecture": "X86_64"
+      }
+    ],
+    "metadata": {
+      "kind": "compute#metadata",
+      "fingerprint": "GzNLKIMnhHY=",
+      "items": [
+        {
+          "key": "enable-osconfig",
+          "value": "TRUE"
+        }
+      ]
+    },
+    "serviceAccounts": [
+      {
+        "email": "9033242169-compute@developer.gserviceaccount.com",
+        "scopes": [
+          "https://www.googleapis.com/auth/devstorage.read_only",
+          "https://www.googleapis.com/auth/logging.write",
+          "https://www.googleapis.com/auth/monitoring.write",
+          "https://www.googleapis.com/auth/service.management.readonly",
+          "https://www.googleapis.com/auth/servicecontrol",
+          "https://www.googleapis.com/auth/trace.append"
+        ]
+      }
+    ],
+    "selfLink": "https://www.googleapis.com/compute/v1/projects/finops360-dev-2025/zones/us-central1-c/instances/instance-20250409-135727",
+    "scheduling": {
+      "onHostMaintenance": "MIGRATE",
+      "automaticRestart": true,
+      "preemptible": false,
+      "provisioningModel": "STANDARD"
+    },
+    "cpuPlatform": "Intel Broadwell",
+    "labels": {
+      "goog-ops-agent-policy": "v2-x86-template-1-4-0"
+    },
+    "labelFingerprint": "pzBpbdzjubE=",
+    "startRestricted": false,
+    "deletionProtection": false,
+    "reservationAffinity": {
+      "consumeReservationType": "ANY_RESERVATION"
+    },
+    "displayDevice": {
+      "enableDisplay": false
+    },
+    "shieldedInstanceConfig": {
+      "enableSecureBoot": false,
+      "enableVtpm": true,
+      "enableIntegrityMonitoring": true
+    },
+    "shieldedInstanceIntegrityPolicy": {
+      "updateAutoLearnPolicy": true
+    },
+    "confidentialInstanceConfig": {
+      "enableConfidentialCompute": false
+    },
+    "fingerprint": "SFxaZkcCZgk=",
+    "lastStartTimestamp": "2025-04-09T06:57:47.583-07:00",
+    "satisfiesPzi": true,
+    "keyRevocationActionType": "NONE",
+    "c7n:MatchedFilters": [
+      "labels.env",
+      "labels.owner"
+    ]
+  }
+]

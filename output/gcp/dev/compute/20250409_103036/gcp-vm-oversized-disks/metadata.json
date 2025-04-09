@@ -1,0 +1,104 @@
+{
+  "policy": {
+    "name": "gcp-vm-oversized-disks",
+    "resource": "gcp.instance",
+    "description": "Identifies Google Compute Engine instances with persistent disks that are\nsignificantly underutilized (low I/O operations but high capacity).\n",
+    "filters": [
+      {
+        "type": "value",
+        "key": "status",
+        "value": "RUNNING"
+      },
+      {
+        "type": "metrics",
+        "name": "compute.googleapis.com/instance/disk/read_ops_count",
+        "metric-key": "resource.labels.instance_id",
+        "days": 14,
+        "reducer": "REDUCE_MEAN",
+        "aligner": "ALIGN_MEAN",
+        "op": "less-than",
+        "value": 10
+      },
+      {
+        "type": "metrics",
+        "name": "compute.googleapis.com/instance/disk/write_ops_count",
+        "metric-key": "resource.labels.instance_id",
+        "days": 14,
+        "reducer": "REDUCE_MEAN",
+        "aligner": "ALIGN_MEAN",
+        "op": "less-than",
+        "value": 10
+      }
+    ],
+    "actions": [
+      {
+        "type": "notify",
+        "to": [
+          "cloudops@example.com",
+          "finops@example.com"
+        ],
+        "format": "json",
+        "subject": "GCP VM Disk Optimization Opportunity: {name}",
+        "body": "GCP Virtual Machine {name} in project {project_id} has low disk I/O and may have oversized disks.\n\nVM details:\n- Name: {name}\n- Zone: {zone}\n- Machine Type: {machineType}\n- Status: {status}\n- Created: {creationTimestamp}\n- Labels: {labels}\n\nThis VM has very low disk read/write operations but may have large attached disks.\nConsider checking the actual disk usage and potentially resizing disks or changing to a\nmore cost-effective storage type (e.g., Standard vs SSD).\n",
+        "transport": {
+          "type": "pubsub",
+          "topic": "projects/{project_id}/topics/custodian-notifications"
+        }
+      }
+    ]
+  },
+  "version": "0.9.43",
+  "execution": {
+    "id": "6717f50f-c82e-4d06-9857-8ba07fec8e54",
+    "start": 1744219843.6050072,
+    "end_time": 1744219843.991552,
+    "duration": 0.38654494285583496
+  },
+  "config": {
+    "region": "",
+    "regions": [],
+    "cache": "~/.cache/cloud-custodian.cache",
+    "profile": null,
+    "account_id": null,
+    "assume_role": null,
+    "session_policy": null,
+    "external_id": null,
+    "log_group": null,
+    "tracer": null,
+    "metrics_enabled": null,
+    "metrics": null,
+    "output_dir": "output/gcp/dev/compute/20250409_103036",
+    "cache_period": 15,
+    "dryrun": false,
+    "authorization_file": null,
+    "subparser": "run",
+    "config": null,
+    "configs": [
+      "c7n_policies/gcp/dev/compute_policies.yaml"
+    ],
+    "policy_filters": [],
+    "resource_types": [],
+    "verbose": null,
+    "quiet": null,
+    "debug": false,
+    "skip_validation": false,
+    "command": "c7n.commands.run",
+    "vars": null
+  },
+  "sys-stats": {},
+  "api-stats": {},
+  "metrics": [
+    {
+      "MetricName": "ResourceCount",
+      "Timestamp": "2025-04-09T10:30:43.991092",
+      "Value": 0,
+      "Unit": "Count"
+    },
+    {
+      "MetricName": "ResourceTime",
+      "Timestamp": "2025-04-09T10:30:43.991102",
+      "Value": 0.385831356048584,
+      "Unit": "Seconds"
+    }
+  ]
+}

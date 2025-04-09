@@ -74,15 +74,19 @@ This repository provides a **production-ready** approach to address these challe
    - Identifies tables that haven't been accessed in over 30 days
    - Early warning system before tables become completely idle
    
-2. **BigQuery Datasets Without Logging**:
+2. **BigQuery Datasets Missing Required Labels**:
+   - Detects datasets without required labels (env, owner, department)
+   - Helps enforce tagging policies for better cost allocation
+   
+3. **BigQuery Datasets Without Logging**:
    - Finds datasets without access logging enabled
    - Helps maintain security compliance and monitor usage patterns
    
-3. **Idle BigQuery Tables (90+ days)**:
+4. **Idle BigQuery Tables (90+ days)**:
    - Identifies tables not accessed in the last 90 days
    - Candidates for archiving to reduce storage costs
    
-4. **Large Unpartitioned Tables**:
+5. **Large Unpartitioned Tables**:
    - Detects tables larger than 10GB that are not partitioned
    - Helps optimize query performance and reduce costs
 
@@ -99,6 +103,32 @@ This repository provides a **production-ready** approach to address these challe
 3. **Cloud Run Services with High Concurrency**:
    - Identifies services with high concurrency settings but limited CPU
    - Helps prevent performance issues and optimize resource allocation
+
+### Compute Engine (VM) Cost Optimization
+
+1. **VMs Missing Required Labels**:
+   - Identifies VMs without required labels ('env' and 'owner')
+   - Helps enforce tagging policies for better cost allocation
+   
+2. **Idle VMs with Low CPU Utilization**:
+   - Detects running VMs with less than 10% average CPU utilization
+   - Candidates for downsizing or termination
+   
+3. **VMs with No Network Activity**:
+   - Identifies VMs with virtually no network traffic
+   - Likely candidates for termination or investigation
+   
+4. **VMs with Moderate CPU Utilization**:
+   - Finds VMs using between 10-50% of CPU
+   - Candidates for rightsizing to a smaller machine type
+
+5. **VMs with Oversized Disks**:
+   - Detects VMs with low disk I/O operations
+   - Potential candidates for disk resizing or storage type changes
+   
+6. **Long-Running Expensive VMs**:
+   - Identifies high-cost VMs running for more than 30 days
+   - Potential candidates for committed use discounts or custom machine types
 
 ## Running Policies
 
@@ -121,6 +151,11 @@ Run only Cloud Run policies:
 make run-cloudrun
 ```
 
+Run only Compute Engine (VM) policies:
+```bash
+make run-compute
+```
+
 Analyze a specific BigQuery dataset:
 ```bash
 make run-dataset DATASET=my_dataset PROJECT=my-project-id
@@ -129,6 +164,21 @@ make run-dataset DATASET=my_dataset PROJECT=my-project-id
 Analyze Cloud Run services in a specific region:
 ```bash
 make run-region REGION=us-central1 PROJECT=my-project-id
+```
+
+Check VMs for missing required tags:
+```bash
+make run-vm-tags PROJECT=my-project-id
+```
+
+Check VMs for specific required tags:
+```bash
+make run-vm-tags PROJECT=my-project-id TAGS="env owner cost-center team"
+```
+
+Analyze all BigQuery datasets in a project:
+```bash
+make run-bq-project PROJECT=my-project-id
 ```
 
 ### Using Shell Script:
@@ -174,6 +224,24 @@ Common issues and solutions:
    - Check if your project has the resources you're targeting
    - Verify environment variables are correctly set
    - Use the `--dryrun` flag to test policies without executing actions
+   
+5. **Policy Actions**  
+   - The policies are configured as read-only/analytical (no actions defined)
+   - They will identify non-compliant resources without taking actions
+   - If you want to add notify actions for alerting, you can edit the policies and add:
+     ```yaml
+     actions:
+       - type: notify
+         to:
+           - email@example.com
+         format: json
+         subject: 'Alert Subject: {resource_attribute}'
+         body: |
+           Detailed information about the resource...
+         transport:
+           type: pubsub
+           topic: projects/your-actual-project-id/topics/your-notification-topic
+     ```
 
 ### Policy Output
 

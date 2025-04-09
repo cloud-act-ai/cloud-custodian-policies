@@ -1,0 +1,113 @@
+{
+  "policy": {
+    "name": "gcp-vm-long-running-expensive",
+    "resource": "gcp.instance",
+    "description": "Identifies expensive Google Compute Engine instances that have been running \nfor extended periods (more than 30 days). These might be candidates for\nreserved instances or custom instances to optimize costs.\n",
+    "filters": [
+      {
+        "type": "value",
+        "key": "status",
+        "value": "RUNNING"
+      },
+      {
+        "type": "value",
+        "key": "creationTimestamp",
+        "value_type": "age",
+        "op": "greater-than",
+        "value": 30
+      },
+      {
+        "or": [
+          {
+            "type": "value",
+            "key": "machineType",
+            "op": "regex",
+            "value": "n1-standard-8|n1-standard-16|n1-standard-32|n1-highmem-.*|n1-highcpu-.*"
+          },
+          {
+            "type": "value",
+            "key": "machineType",
+            "op": "regex",
+            "value": "n2-standard-8|n2-standard-16|n2-standard-32|n2-highmem-.*|n2-highcpu-.*"
+          },
+          {
+            "type": "value",
+            "key": "machineType",
+            "op": "regex",
+            "value": "c2-standard-.*|m1-.*|m2-.*"
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "type": "notify",
+        "to": [
+          "cloudops@example.com",
+          "finops@example.com"
+        ],
+        "format": "json",
+        "subject": "GCP VM Cost Optimization Opportunity: {name}",
+        "body": "GCP Virtual Machine {name} in project {project_id} is an expensive instance type\nthat has been running for more than 30 days.\n\nVM details:\n- Name: {name}\n- Zone: {zone}\n- Machine Type: {machineType}\n- Running since: {creationTimestamp}\n- Labels: {labels}\n\nCost optimization opportunities:\n1. Consider switching to a committed use discount (1 or 3 year)\n2. Evaluate if a custom machine type would be more cost-effective\n3. Check if the VM can be scheduled to stop during non-business hours\n",
+        "transport": {
+          "type": "pubsub",
+          "topic": "projects/{project_id}/topics/custodian-notifications"
+        }
+      }
+    ]
+  },
+  "version": "0.9.43",
+  "execution": {
+    "id": "c8fb3860-98d8-4649-9895-405036c2c267",
+    "start": 1744219843.992193,
+    "end_time": 1744219843.9947991,
+    "duration": 0.0026061534881591797
+  },
+  "config": {
+    "region": "",
+    "regions": [],
+    "cache": "~/.cache/cloud-custodian.cache",
+    "profile": null,
+    "account_id": null,
+    "assume_role": null,
+    "session_policy": null,
+    "external_id": null,
+    "log_group": null,
+    "tracer": null,
+    "metrics_enabled": null,
+    "metrics": null,
+    "output_dir": "output/gcp/dev/compute/20250409_103036",
+    "cache_period": 15,
+    "dryrun": false,
+    "authorization_file": null,
+    "subparser": "run",
+    "config": null,
+    "configs": [
+      "c7n_policies/gcp/dev/compute_policies.yaml"
+    ],
+    "policy_filters": [],
+    "resource_types": [],
+    "verbose": null,
+    "quiet": null,
+    "debug": false,
+    "skip_validation": false,
+    "command": "c7n.commands.run",
+    "vars": null
+  },
+  "sys-stats": {},
+  "api-stats": {},
+  "metrics": [
+    {
+      "MetricName": "ResourceCount",
+      "Timestamp": "2025-04-09T10:30:43.994572",
+      "Value": 0,
+      "Unit": "Count"
+    },
+    {
+      "MetricName": "ResourceTime",
+      "Timestamp": "2025-04-09T10:30:43.994578",
+      "Value": 0.0019941329956054688,
+      "Unit": "Seconds"
+    }
+  ]
+}

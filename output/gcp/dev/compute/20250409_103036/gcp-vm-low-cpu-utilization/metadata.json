@@ -1,0 +1,103 @@
+{
+  "policy": {
+    "name": "gcp-vm-low-cpu-utilization",
+    "resource": "gcp.instance",
+    "description": "Identifies Google Compute Engine instances with low CPU utilization.\nThese VMs might be oversized or unused, and are candidates for rightsizing or termination.\n",
+    "filters": [
+      {
+        "type": "value",
+        "key": "status",
+        "value": "RUNNING"
+      },
+      {
+        "type": "metrics",
+        "name": "compute.googleapis.com/instance/cpu/utilization",
+        "metric-key": "resource.labels.instance_id",
+        "days": 14,
+        "reducer": "REDUCE_MEAN",
+        "aligner": "ALIGN_MEAN",
+        "op": "less-than",
+        "value": 0.1
+      },
+      {
+        "not": [
+          {
+            "type": "value",
+            "key": "labels.preserve",
+            "value": "true"
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "type": "notify",
+        "to": [
+          "cloudops@example.com",
+          "finops@example.com"
+        ],
+        "format": "json",
+        "subject": "GCP VM Low CPU Utilization: {name}",
+        "body": "GCP Virtual Machine {name} in project {project_id} has low CPU utilization.\n\nVM details:\n- Name: {name}\n- Zone: {zone}\n- Machine Type: {machineType}\n- CPU Utilization: Less than 10% average over 14 days\n- Labels: {labels}\n\nRecommendations:\n1. Verify if this VM is still needed\n2. Consider downsizing to a smaller machine type\n3. If the VM runs batch jobs, consider using Preemptible VMs\n4. If not needed, stop or delete the VM\n",
+        "transport": {
+          "type": "pubsub",
+          "topic": "projects/{project_id}/topics/custodian-notifications"
+        }
+      }
+    ]
+  },
+  "version": "0.9.43",
+  "execution": {
+    "id": "aaf1b124-07bf-41bd-bcb0-eafa85166b8b",
+    "start": 1744219837.400008,
+    "end_time": 1744219840.33264,
+    "duration": 2.9326319694519043
+  },
+  "config": {
+    "region": "",
+    "regions": [],
+    "cache": "~/.cache/cloud-custodian.cache",
+    "profile": null,
+    "account_id": null,
+    "assume_role": null,
+    "session_policy": null,
+    "external_id": null,
+    "log_group": null,
+    "tracer": null,
+    "metrics_enabled": null,
+    "metrics": null,
+    "output_dir": "output/gcp/dev/compute/20250409_103036",
+    "cache_period": 15,
+    "dryrun": false,
+    "authorization_file": null,
+    "subparser": "run",
+    "config": null,
+    "configs": [
+      "c7n_policies/gcp/dev/compute_policies.yaml"
+    ],
+    "policy_filters": [],
+    "resource_types": [],
+    "verbose": null,
+    "quiet": null,
+    "debug": false,
+    "skip_validation": false,
+    "command": "c7n.commands.run",
+    "vars": null
+  },
+  "sys-stats": {},
+  "api-stats": {},
+  "metrics": [
+    {
+      "MetricName": "ResourceCount",
+      "Timestamp": "2025-04-09T10:30:40.331718",
+      "Value": 0,
+      "Unit": "Count"
+    },
+    {
+      "MetricName": "ResourceTime",
+      "Timestamp": "2025-04-09T10:30:40.331737",
+      "Value": 2.9312362670898438,
+      "Unit": "Seconds"
+    }
+  ]
+}

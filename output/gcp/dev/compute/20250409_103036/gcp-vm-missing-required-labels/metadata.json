@@ -1,0 +1,104 @@
+{
+  "policy": {
+    "name": "gcp-vm-missing-required-labels",
+    "resource": "gcp.instance",
+    "description": "Identifies Google Compute Engine instances (VMs) that are missing required labels.\nRequired labels help with cost allocation, ownership tracking, and resource governance.\nThis policy checks for the absence of 'env' and 'owner' labels.\n",
+    "filters": [
+      {
+        "or": [
+          {
+            "type": "value",
+            "key": "labels",
+            "value": null
+          },
+          {
+            "type": "value",
+            "key": "labels.env",
+            "value": null
+          },
+          {
+            "type": "value",
+            "key": "labels.owner",
+            "value": null
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "type": "notify",
+        "to": [
+          "cloudops@example.com",
+          "finops@example.com"
+        ],
+        "format": "json",
+        "subject": "GCP VM Missing Required Labels: {name}",
+        "body": "GCP Virtual Machine {name} in project {project_id} is missing required labels.\n\nVM details:\n- Name: {name}\n- Zone: {zone}\n- Machine Type: {machineType}\n- Status: {status}\n- Created: {creationTimestamp}\n- Labels: {labels}\n\nRequired labels:\n- env: Environment label (e.g., prod, dev, test)\n- owner: Team or individual responsible for this resource\n\nPlease update the VM with the required labels for proper cost allocation and governance.\n",
+        "transport": {
+          "type": "pubsub",
+          "topic": "projects/{project_id}/topics/custodian-notifications"
+        }
+      }
+    ]
+  },
+  "version": "0.9.43",
+  "execution": {
+    "id": "d62ddc20-11b5-4f86-b4e8-734d3c262c07",
+    "start": 1744219836.9330208,
+    "end_time": 1744219837.3923771,
+    "duration": 0.45935630798339844
+  },
+  "config": {
+    "region": "",
+    "regions": [],
+    "cache": "~/.cache/cloud-custodian.cache",
+    "profile": null,
+    "account_id": null,
+    "assume_role": null,
+    "session_policy": null,
+    "external_id": null,
+    "log_group": null,
+    "tracer": null,
+    "metrics_enabled": null,
+    "metrics": null,
+    "output_dir": "output/gcp/dev/compute/20250409_103036",
+    "cache_period": 15,
+    "dryrun": false,
+    "authorization_file": null,
+    "subparser": "run",
+    "config": null,
+    "configs": [
+      "c7n_policies/gcp/dev/compute_policies.yaml"
+    ],
+    "policy_filters": [],
+    "resource_types": [],
+    "verbose": null,
+    "quiet": null,
+    "debug": false,
+    "skip_validation": false,
+    "command": "c7n.commands.run",
+    "vars": null
+  },
+  "sys-stats": {},
+  "api-stats": {},
+  "metrics": [
+    {
+      "MetricName": "ResourceCount",
+      "Timestamp": "2025-04-09T10:30:36.935696",
+      "Value": 1,
+      "Unit": "Count"
+    },
+    {
+      "MetricName": "ResourceTime",
+      "Timestamp": "2025-04-09T10:30:36.935701",
+      "Value": 0.002351999282836914,
+      "Unit": "Seconds"
+    },
+    {
+      "MetricName": "PolicyException",
+      "Timestamp": "2025-04-09T10:30:37.392364",
+      "Value": 1,
+      "Unit": "Count"
+    }
+  ]
+}

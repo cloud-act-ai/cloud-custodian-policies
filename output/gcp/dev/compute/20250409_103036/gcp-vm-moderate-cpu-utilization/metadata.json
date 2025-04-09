@@ -1,0 +1,113 @@
+{
+  "policy": {
+    "name": "gcp-vm-moderate-cpu-utilization",
+    "resource": "gcp.instance",
+    "description": "Identifies Google Compute Engine instances with moderate CPU utilization (10-50%).\nThese VMs might be candidates for rightsizing to a smaller machine type.\n",
+    "filters": [
+      {
+        "type": "value",
+        "key": "status",
+        "value": "RUNNING"
+      },
+      {
+        "type": "metrics",
+        "name": "compute.googleapis.com/instance/cpu/utilization",
+        "metric-key": "resource.labels.instance_id",
+        "days": 30,
+        "reducer": "REDUCE_MEAN",
+        "aligner": "ALIGN_MEAN",
+        "op": "greater-than",
+        "value": 0.1
+      },
+      {
+        "type": "metrics",
+        "name": "compute.googleapis.com/instance/cpu/utilization",
+        "metric-key": "resource.labels.instance_id",
+        "days": 30,
+        "reducer": "REDUCE_MEAN",
+        "aligner": "ALIGN_MEAN",
+        "op": "less-than",
+        "value": 0.5
+      },
+      {
+        "not": [
+          {
+            "type": "value",
+            "key": "labels.preserve",
+            "value": "true"
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "type": "notify",
+        "to": [
+          "cloudops@example.com",
+          "finops@example.com"
+        ],
+        "format": "json",
+        "subject": "GCP VM Rightsizing Opportunity: {name}",
+        "body": "GCP Virtual Machine {name} in project {project_id} is a candidate for rightsizing.\n\nVM details:\n- Name: {name}\n- Zone: {zone}\n- Machine Type: {machineType}\n- Status: {status}\n- Created: {creationTimestamp}\n- Average CPU: Between 10% and 50% over 30 days\n- Labels: {labels}\n\nThis VM is consistently using only moderate CPU resources and might be over-provisioned.\nConsider rightsizing to a smaller machine type to optimize costs.\n",
+        "transport": {
+          "type": "pubsub",
+          "topic": "projects/{project_id}/topics/custodian-notifications"
+        }
+      }
+    ]
+  },
+  "version": "0.9.43",
+  "execution": {
+    "id": "459a3660-9258-4341-9b70-b5ab5bcda6e5",
+    "start": 1744219840.709462,
+    "end_time": 1744219843.604627,
+    "duration": 2.895164966583252
+  },
+  "config": {
+    "region": "",
+    "regions": [],
+    "cache": "~/.cache/cloud-custodian.cache",
+    "profile": null,
+    "account_id": null,
+    "assume_role": null,
+    "session_policy": null,
+    "external_id": null,
+    "log_group": null,
+    "tracer": null,
+    "metrics_enabled": null,
+    "metrics": null,
+    "output_dir": "output/gcp/dev/compute/20250409_103036",
+    "cache_period": 15,
+    "dryrun": false,
+    "authorization_file": null,
+    "subparser": "run",
+    "config": null,
+    "configs": [
+      "c7n_policies/gcp/dev/compute_policies.yaml"
+    ],
+    "policy_filters": [],
+    "resource_types": [],
+    "verbose": null,
+    "quiet": null,
+    "debug": false,
+    "skip_validation": false,
+    "command": "c7n.commands.run",
+    "vars": null
+  },
+  "sys-stats": {},
+  "api-stats": {},
+  "metrics": [
+    {
+      "MetricName": "ResourceCount",
+      "Timestamp": "2025-04-09T10:30:43.604228",
+      "Value": 0,
+      "Unit": "Count"
+    },
+    {
+      "MetricName": "ResourceTime",
+      "Timestamp": "2025-04-09T10:30:43.604235",
+      "Value": 2.8945090770721436,
+      "Unit": "Seconds"
+    }
+  ]
+}

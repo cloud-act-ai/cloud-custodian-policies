@@ -1,0 +1,161 @@
+policies:
+  # Find VMs without required tags (env and owner)
+  - name: gcp-vm-missing-required-labels
+    resource: gcp.instance
+    description: |
+      Identifies Google Compute Engine instances (VMs) that are missing required labels.
+      Required labels help with cost allocation, ownership tracking, and resource governance.
+      This policy checks for the absence of 'env' and 'owner' labels.
+    filters:
+      - or:
+        - type: value
+          key: labels
+          value: null
+        - type: value
+          key: labels.env
+          value: null
+        - type: value
+          key: labels.owner
+          value: null
+  
+  # Find idle VMs (low CPU utilization)
+  - name: gcp-vm-low-cpu-utilization
+    resource: gcp.instance
+    description: |
+      Identifies Google Compute Engine instances with low CPU utilization.
+      These VMs might be oversized or unused, and are candidates for rightsizing or termination.
+    filters:
+      - type: value
+        key: status
+        value: RUNNING
+      - type: metrics
+        name: compute.googleapis.com/instance/cpu/utilization
+        metric-key: resource.labels.instance_id
+        days: 14
+        reducer: REDUCE_MEAN
+        aligner: ALIGN_MEAN
+        op: less-than
+        value: 0.1  # Less than 10% average CPU utilization
+      - not:
+          - type: value
+            key: labels.preserve
+            value: "true"
+  
+  # Find VMs with no network activity
+  - name: gcp-vm-no-network-activity
+    resource: gcp.instance
+    description: |
+      Identifies Google Compute Engine instances with no network activity (ingress or egress).
+      These VMs might be unused or disconnected and are candidates for termination.
+    filters:
+      - type: value
+        key: status
+        value: RUNNING
+      - type: metrics
+        name: compute.googleapis.com/instance/network/received_bytes_count
+        metric-key: resource.labels.instance_id
+        days: 7
+        reducer: REDUCE_SUM
+        aligner: ALIGN_SUM
+        op: less-than
+        value: 1000  # Minimal network ingress (essentially none)
+      - type: metrics
+        name: compute.googleapis.com/instance/network/sent_bytes_count
+        metric-key: resource.labels.instance_id
+        days: 7
+        reducer: REDUCE_SUM
+        aligner: ALIGN_SUM
+        op: less-than
+        value: 1000  # Minimal network egress (essentially none)
+      - not:
+          - type: value
+            key: labels.preserve
+            value: "true"
+
+  # Find VMs with moderate CPU utilization (candidates for rightsizing)
+  - name: gcp-vm-moderate-cpu-utilization
+    resource: gcp.instance
+    description: |
+      Identifies Google Compute Engine instances with moderate CPU utilization (10-50%).
+      These VMs might be candidates for rightsizing to a smaller machine type.
+    filters:
+      - type: value
+        key: status
+        value: RUNNING
+      - type: metrics
+        name: compute.googleapis.com/instance/cpu/utilization
+        metric-key: resource.labels.instance_id
+        days: 30
+        reducer: REDUCE_MEAN
+        aligner: ALIGN_MEAN
+        op: greater-than
+        value: 0.1  # Greater than 10% average CPU utilization
+      - type: metrics
+        name: compute.googleapis.com/instance/cpu/utilization
+        metric-key: resource.labels.instance_id
+        days: 30
+        reducer: REDUCE_MEAN
+        aligner: ALIGN_MEAN
+        op: less-than
+        value: 0.5  # Less than 50% average CPU utilization
+      - not:
+          - type: value
+            key: labels.preserve
+            value: "true"
+
+  # Find VMs with high disk usage but low I/O (candidates for disk resizing)
+  - name: gcp-vm-oversized-disks
+    resource: gcp.instance
+    description: |
+      Identifies Google Compute Engine instances with persistent disks that are
+      significantly underutilized (low I/O operations but high capacity).
+    filters:
+      - type: value
+        key: status
+        value: RUNNING
+      - type: metrics
+        name: compute.googleapis.com/instance/disk/read_ops_count
+        metric-key: resource.labels.instance_id
+        days: 14
+        reducer: REDUCE_MEAN
+        aligner: ALIGN_MEAN
+        op: less-than
+        value: 10  # Very low read operations
+      - type: metrics
+        name: compute.googleapis.com/instance/disk/write_ops_count
+        metric-key: resource.labels.instance_id
+        days: 14
+        reducer: REDUCE_MEAN
+        aligner: ALIGN_MEAN
+        op: less-than
+        value: 10  # Very low write operations
+
+  # Find expensive VMs that have been running for extended periods
+  - name: gcp-vm-long-running-expensive
+    resource: gcp.instance
+    description: |
+      Identifies expensive Google Compute Engine instances that have been running 
+      for extended periods (more than 30 days). These might be candidates for
+      reserved instances or custom instances to optimize costs.
+    filters:
+      - type: value
+        key: status
+        value: RUNNING
+      - type: value
+        key: creationTimestamp
+        value_type: age
+        op: greater-than
+        value: 30
+      - or:
+          - type: value
+            key: machineType
+            op: regex
+            value: 'n1-standard-8|n1-standard-16|n1-standard-32|n1-highmem-.*|n1-highcpu-.*'
+          - type: value
+            key: machineType
+            op: regex
+            value: 'n2-standard-8|n2-standard-16|n2-standard-32|n2-highmem-.*|n2-highcpu-.*'
+          - type: value
+            key: machineType
+            op: regex
+            value: 'c2-standard-.*|m1-.*|m2-.*'
