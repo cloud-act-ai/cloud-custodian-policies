@@ -1,0 +1,42 @@
+2025-04-09 06:47:22,648 - custodian.output - ERROR - Error while executing policy
+Traceback (most recent call last):
+  File "/Users/gurukallam/projects/finops360/cloud-custodian-policies/venv/lib/python3.13/site-packages/c7n/policy.py", line 330, in run
+    resources = self.policy.resource_manager.resources()
+  File "/Users/gurukallam/projects/finops360/cloud-custodian-policies/venv/lib/python3.13/site-packages/c7n_gcp/query.py", line 215, in resources
+    resources = self.filter_resources(resources)
+  File "/Users/gurukallam/projects/finops360/cloud-custodian-policies/venv/lib/python3.13/site-packages/c7n/manager.py", line 113, in filter_resources
+    resources = f.process(resources, event)
+  File "/Users/gurukallam/projects/finops360/cloud-custodian-policies/venv/lib/python3.13/site-packages/c7n/filters/core.py", line 600, in process
+    return super(ValueFilter, self).process(resources, event)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/Users/gurukallam/projects/finops360/cloud-custodian-policies/venv/lib/python3.13/site-packages/c7n/filters/core.py", line 205, in process
+    return list(filter(self, resources))
+  File "/Users/gurukallam/projects/finops360/cloud-custodian-policies/venv/lib/python3.13/site-packages/c7n/filters/core.py", line 587, in __call__
+    matched = self.match(i)
+  File "/Users/gurukallam/projects/finops360/cloud-custodian-policies/venv/lib/python3.13/site-packages/c7n/filters/core.py", line 651, in match
+    r = self.get_resource_value(self.k, i)
+  File "/Users/gurukallam/projects/finops360/cloud-custodian-policies/venv/lib/python3.13/site-packages/c7n/filters/core.py", line 603, in get_resource_value
+    return super(ValueFilter, self).get_resource_value(k, i, self.data.get('value_regex'))
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gurukallam/projects/finops360/cloud-custodian-policies/venv/lib/python3.13/site-packages/c7n/filters/core.py", line 265, in get_resource_value
+    self.expr[k] = jmespath_compile(k)
+                   ~~~~~~~~~~~~~~~~^^^
+  File "/Users/gurukallam/projects/finops360/cloud-custodian-policies/venv/lib/python3.13/site-packages/c7n/utils.py", line 1011, in jmespath_compile
+    parsed = C7NJMESPathParser().parse(expression)
+  File "/Users/gurukallam/projects/finops360/cloud-custodian-policies/venv/lib/python3.13/site-packages/c7n/utils.py", line 971, in parse
+    result = super().parse(expression)
+  File "/Users/gurukallam/projects/finops360/cloud-custodian-policies/venv/lib/python3.13/site-packages/jmespath/parser.py", line 88, in parse
+    parsed_result = self._do_parse(expression)
+  File "/Users/gurukallam/projects/finops360/cloud-custodian-policies/venv/lib/python3.13/site-packages/jmespath/parser.py", line 96, in _do_parse
+    return self._parse(expression)
+           ~~~~~~~~~~~^^^^^^^^^^^^
+  File "/Users/gurukallam/projects/finops360/cloud-custodian-policies/venv/lib/python3.13/site-packages/jmespath/parser.py", line 109, in _parse
+    self._tokens = list(self.tokenizer)
+                   ~~~~^^^^^^^^^^^^^^^^
+  File "/Users/gurukallam/projects/finops360/cloud-custodian-policies/venv/lib/python3.13/site-packages/jmespath/lexer.py", line 107, in tokenize
+    raise LexerError(lexer_position=self._position,
+                     lexer_value=self._current,
+                     message="Unknown token %s" % self._current)
+jmespath.exceptions.LexerError: Bad jmespath expression: Unknown token /:
+metadata.labels.cloud.googleapis.com/location
+                                    ^

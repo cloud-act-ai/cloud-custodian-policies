@@ -1,0 +1,2 @@
+2025-04-09 06:48:36,524 - custodian.filters - INFO - No metrics found for run.googleapis.com/request_count.ALIGN_SUM.REDUCE_SUM
+2025-04-09 06:48:36,525 - custodian.policy - INFO - policy:cloud-run-underutilized-services resource:gcp.cloud-run-service region: count:0 time:0.70

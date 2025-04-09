@@ -1,0 +1,89 @@
+{
+  "policy": {
+    "name": "cloud-run-overprovisioned-services",
+    "resource": "gcp.cloud-run-service",
+    "description": "Identifies Cloud Run services that have high memory allocation but low CPU utilization.\nThese services might be candidates for right-sizing to reduce costs.\n",
+    "filters": [
+      {
+        "type": "value",
+        "key": "spec.template.spec.containers[0].resources.limits.memory",
+        "op": "greater-than",
+        "value": "1Gi"
+      },
+      {
+        "type": "metrics",
+        "name": "run.googleapis.com/container/cpu/utilization",
+        "metric-key": "resource.labels.service_name",
+        "days": 14,
+        "reducer": "REDUCE_MAX",
+        "aligner": "ALIGN_MAX",
+        "op": "less-than",
+        "value": 0.5
+      }
+    ],
+    "actions": [
+      {
+        "type": "notify",
+        "to": [
+          "devops@example.com",
+          "finops@example.com"
+        ],
+        "format": "json",
+        "subject": "Over-provisioned Cloud Run Service: {metadata.name}",
+        "body": "Cloud Run service {metadata.name} in project {project_id} appears to be over-provisioned.\n\nService details:\n- Name: {metadata.name}\n- Region: {metadata.labels.cloud.googleapis.com/location}\n- Created: {metadata.creationTimestamp}\n- Memory: {spec.template.spec.containers[0].resources.limits.memory}\n- CPU: {spec.template.spec.containers[0].resources.limits.cpu}\n\nThis service has high memory allocation but low CPU utilization (max under 50% in past 14 days).\nConsider right-sizing this service to reduce costs:\n- Reduce memory allocation\n- Consider switching to CPU-based billing if appropriate\n",
+        "transport": {
+          "type": "pubsub",
+          "topic": "projects/{project_id}/topics/custodian-notifications"
+        }
+      }
+    ]
+  },
+  "version": "0.9.43",
+  "execution": {
+    "id": "01098d8c-1b19-4fc5-92f1-1b079c5f1af2",
+    "start": 1744206516.528397,
+    "end_time": 1744206516.659631,
+    "duration": 0.13123393058776855
+  },
+  "config": {
+    "region": "",
+    "regions": [],
+    "cache": "~/.cache/cloud-custodian.cache",
+    "profile": null,
+    "account_id": null,
+    "assume_role": null,
+    "session_policy": null,
+    "external_id": null,
+    "log_group": null,
+    "tracer": null,
+    "metrics_enabled": null,
+    "metrics": null,
+    "output_dir": "output/gcp/dev/cloudrun/20250409_064835",
+    "cache_period": 15,
+    "dryrun": false,
+    "authorization_file": null,
+    "subparser": "run",
+    "config": null,
+    "configs": [
+      "c7n_policies/gcp/dev/cloudrun_policies.yaml"
+    ],
+    "policy_filters": [],
+    "resource_types": [],
+    "verbose": null,
+    "quiet": null,
+    "debug": false,
+    "skip_validation": false,
+    "command": "c7n.commands.run",
+    "vars": null
+  },
+  "sys-stats": {},
+  "api-stats": {},
+  "metrics": [
+    {
+      "MetricName": "PolicyException",
+      "Timestamp": "2025-04-09T06:48:36.659585",
+      "Value": 1,
+      "Unit": "Count"
+    }
+  ]
+}

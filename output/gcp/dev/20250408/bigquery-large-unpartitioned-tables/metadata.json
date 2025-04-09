@@ -1,0 +1,89 @@
+{
+  "policy": {
+    "name": "bigquery-large-unpartitioned-tables",
+    "resource": "gcp.bq-table",
+    "description": "Identifies BigQuery tables larger than 10GB that are not partitioned.\nPartitioning large tables can significantly improve query performance and reduce costs.\n",
+    "filters": [
+      {
+        "type": "value",
+        "key": "numBytes",
+        "op": "greater-than",
+        "value": 10737418240
+      },
+      {
+        "type": "value",
+        "key": "timePartitioning",
+        "value": null
+      }
+    ],
+    "actions": [
+      {
+        "type": "notify",
+        "to": [
+          "dataops@example.com",
+          "finops@example.com"
+        ],
+        "format": "json",
+        "subject": "BigQuery Large Unpartitioned Table: {tableReference.tableId}",
+        "transport": {
+          "type": "pubsub",
+          "topic": "projects/{project_id}/topics/custodian-notifications"
+        }
+      }
+    ]
+  },
+  "version": "0.9.43",
+  "execution": {
+    "id": "e9d45828-6887-4042-9a65-540242f8e6dd",
+    "start": 1744141432.221003,
+    "end_time": 1744141432.221427,
+    "duration": 0.0004239082336425781
+  },
+  "config": {
+    "region": "",
+    "regions": [],
+    "cache": "~/.cache/cloud-custodian.cache",
+    "profile": null,
+    "account_id": null,
+    "assume_role": null,
+    "session_policy": null,
+    "external_id": null,
+    "log_group": null,
+    "tracer": null,
+    "metrics_enabled": null,
+    "metrics": null,
+    "output_dir": "/Users/gurukallam/projects/finops360/cloud-custodian-policies/output/gcp/dev/20250408",
+    "cache_period": 15,
+    "dryrun": false,
+    "authorization_file": null,
+    "subparser": "run",
+    "config": null,
+    "configs": [
+      "/Users/gurukallam/projects/finops360/cloud-custodian-policies/c7n_policies/gcp/dev/policies.yaml"
+    ],
+    "policy_filters": [],
+    "resource_types": [],
+    "verbose": null,
+    "quiet": null,
+    "debug": false,
+    "skip_validation": false,
+    "command": "c7n.commands.run",
+    "vars": null
+  },
+  "sys-stats": {},
+  "api-stats": {},
+  "metrics": [
+    {
+      "MetricName": "ResourceCount",
+      "Timestamp": "2025-04-08T12:43:52.221324",
+      "Value": 0,
+      "Unit": "Count"
+    },
+    {
+      "MetricName": "ResourceTime",
+      "Timestamp": "2025-04-08T12:43:52.221326",
+      "Value": 0.00018930435180664062,
+      "Unit": "Seconds"
+    }
+  ]
+}

@@ -1,0 +1,269 @@
+policies:
+  # Find BigQuery tables not accessed in the last 30 days
+  - name: bigquery-tables-not-accessed-30days
+    resource: gcp.bq-table
+    description: |
+      Identifies BigQuery tables that have not been accessed in the last 30 days.
+      This policy helps with early identification of potentially unused tables
+      before they become completely idle (90+ days).
+    filters:
+      - type: value
+        key: lastModifiedTime
+        value_type: age
+        op: greater-than
+        value: 30
+      - not:
+          - type: value
+            key: tableReference.tableId
+            op: regex
+            value: '^(archive|backup|temp|test).*'
+    actions:
+      - type: notify
+        to:
+          - dataops@example.com
+        format: json
+        subject: 'BigQuery Table Not Accessed (30+ days): {tableReference.tableId}'
+        body: |
+          BigQuery table {tableReference.tableId} in dataset {tableReference.datasetId} 
+          has not been accessed in over 30 days. Consider reviewing usage patterns
+          of this table.
+          
+          Last modified: {lastModifiedTime}
+          Table ID: {id}
+          Project: {project_id}
+          Dataset: {tableReference.datasetId}
+          Size: {numBytes} bytes
+          
+          This notification is for early monitoring purposes. Tables not accessed for
+          90+ days will be flagged for potential archiving.
+        transport:
+          type: pubsub
+          topic: projects/{project_id}/topics/custodian-notifications
+
+  # Find BigQuery datasets older than 30 days without access logs
+  - name: bigquery-datasets-without-logging
+    resource: gcp.bq-dataset
+    description: |
+      Identifies BigQuery datasets older than 30 days that do not have 
+      data access logging enabled. Access logs are essential for monitoring 
+      usage patterns and security compliance.
+    filters:
+      - type: value
+        key: creationTime
+        value_type: age
+        op: greater-than
+        value: 30
+      - not:
+          - type: value
+            key: datasetReference.datasetId
+            op: regex
+            value: '^(temp|test).*'
+      - type: value
+        key: access_logs.logBigqueryAuditMetadata
+        value: false
+    actions:
+      - type: notify
+        to:
+          - dataops@example.com
+        format: json
+        subject: 'BigQuery Dataset without Access Logging: {datasetReference.datasetId}'
+        transport:
+          type: pubsub
+          topic: projects/{project_id}/topics/custodian-notifications
+
+  # Find idle BigQuery tables (not accessed in the last 90 days)
+  - name: bigquery-idle-tables
+    resource: gcp.bq-table
+    description: |
+      Finds BigQuery tables that have not been accessed in the last 90 days.
+      These tables might be candidates for archiving to reduce storage costs.
+    filters:
+      - type: value
+        key: lastModifiedTime
+        value_type: age
+        op: greater-than
+        value: 90
+      - not:
+          - type: value
+            key: tableReference.tableId
+            op: regex
+            value: '^(archive|backup).*'
+    actions:
+      - type: notify
+        to:
+          - dataops@example.com
+        format: json
+        subject: 'BigQuery Idle Table Detected: {tableReference.tableId}'
+        body: |
+          BigQuery table {tableReference.tableId} in dataset {tableReference.datasetId} 
+          has not been accessed in over 90 days. Consider archiving this table to 
+          reduce storage costs.
+          
+          Last modified: {lastModifiedTime}
+          Table ID: {id}
+          
+          This table is a candidate for archiving in 30 days.
+        transport:
+          type: pubsub
+          topic: projects/{project_id}/topics/custodian-notifications
+
+  # Find large BigQuery tables without partitioning
+  - name: bigquery-large-unpartitioned-tables
+    resource: gcp.bq-table
+    description: |
+      Identifies BigQuery tables larger than 10GB that are not partitioned.
+      Partitioning large tables can significantly improve query performance and reduce costs.
+    filters:
+      - type: value
+        key: numBytes
+        op: greater-than
+        value: 10737418240  # 10GB in bytes
+      - type: value
+        key: timePartitioning
+        value: null
+    actions:
+      - type: notify
+        to:
+          - dataops@example.com
+          - finops@example.com
+        format: json
+        subject: 'BigQuery Large Unpartitioned Table: {tableReference.tableId}'
+        transport:
+          type: pubsub
+          topic: projects/{project_id}/topics/custodian-notifications
+          
+  # Find underutilized Cloud Run services (low request count)
+  - name: cloud-run-underutilized-services
+    resource: gcp.cloud-run-service
+    description: |
+      Identifies Cloud Run services that have low request counts over the past 30 days.
+      These services might be candidates for consolidation or removal to reduce costs.
+    filters:
+      - type: metrics
+        name: run.googleapis.com/request_count
+        days: 30
+        reducer: REDUCE_SUM
+        aligner: ALIGN_SUM
+        op: less-than
+        value: 1000  # Adjust this threshold based on your usage patterns
+      - not:
+          - type: value
+            key: metadata.labels
+            op: contains
+            value: essential:true
+    actions:
+      - type: notify
+        to:
+          - devops@example.com
+          - finops@example.com
+        format: json
+        subject: 'Underutilized Cloud Run Service: {metadata.name}'
+        body: |
+          Cloud Run service {metadata.name} in project {project_id} is potentially underutilized.
+          
+          Service details:
+          - Name: {metadata.name}
+          - Region: {metadata.labels.cloud.googleapis.com/location}
+          - Created: {metadata.creationTimestamp}
+          - URL: {status.url}
+          
+          This service has received fewer than 1,000 requests in the past 30 days.
+          Consider consolidating or removing this service if it's no longer needed.
+        transport:
+          type: pubsub
+          topic: projects/{project_id}/topics/custodian-notifications
+          
+  # Find over-provisioned Cloud Run services (high memory, low usage)
+  - name: cloud-run-overprovisioned-services
+    resource: gcp.cloud-run-service
+    description: |
+      Identifies Cloud Run services that have high memory allocation but low CPU utilization.
+      These services might be candidates for right-sizing to reduce costs.
+    filters:
+      - type: value
+        key: spec.template.spec.containers[0].resources.limits.memory
+        op: greater-than
+        value: 1Gi  # Services with more than 1GB memory
+      - type: metrics
+        name: run.googleapis.com/container/cpu/utilization
+        days: 14
+        reducer: REDUCE_MAX
+        aligner: ALIGN_MAX
+        op: less-than
+        value: 0.5  # Max CPU utilization less than 50%
+    actions:
+      - type: notify
+        to:
+          - devops@example.com
+          - finops@example.com
+        format: json
+        subject: 'Over-provisioned Cloud Run Service: {metadata.name}'
+        body: |
+          Cloud Run service {metadata.name} in project {project_id} appears to be over-provisioned.
+          
+          Service details:
+          - Name: {metadata.name}
+          - Region: {metadata.labels.cloud.googleapis.com/location}
+          - Created: {metadata.creationTimestamp}
+          - Memory: {spec.template.spec.containers[0].resources.limits.memory}
+          - CPU: {spec.template.spec.containers[0].resources.limits.cpu}
+          
+          This service has high memory allocation but low CPU utilization (max under 50% in past 14 days).
+          Consider right-sizing this service to reduce costs:
+          - Reduce memory allocation
+          - Consider switching to CPU-based billing if appropriate
+        transport:
+          type: pubsub
+          topic: projects/{project_id}/topics/custodian-notifications
+  
+  # Find Cloud Run services with high concurrency but low CPU allocation
+  - name: cloud-run-high-concurrency-services
+    resource: gcp.cloud-run-service
+    description: |
+      Identifies Cloud Run services with high concurrency settings but limited CPU allocation.
+      These services might experience performance issues and higher costs due to cold starts.
+    filters:
+      - type: value
+        key: spec.template.spec.containerConcurrency
+        op: greater-than
+        value: 50  # High concurrency setting
+      - type: value
+        key: spec.template.spec.containers[0].resources.limits.cpu
+        op: less-than
+        value: 1  # Less than 1 CPU
+      - type: metrics
+        name: run.googleapis.com/container/instance_count
+        days: 7
+        reducer: REDUCE_MAX
+        aligner: ALIGN_MAX
+        op: greater-than
+        value: 5  # Services that scale to multiple instances
+    actions:
+      - type: notify
+        to:
+          - devops@example.com
+          - finops@example.com
+        format: json
+        subject: 'Cloud Run Service with High Concurrency: {metadata.name}'
+        body: |
+          Cloud Run service {metadata.name} in project {project_id} has high concurrency but limited CPU.
+          
+          Service details:
+          - Name: {metadata.name}
+          - Region: {metadata.labels.cloud.googleapis.com/location}
+          - Concurrency: {spec.template.spec.containerConcurrency}
+          - CPU: {spec.template.spec.containers[0].resources.limits.cpu}
+          - Max instances: {spec.template.spec.containerConcurrency}
+          
+          This configuration may lead to:
+          - Increased latency due to CPU contention
+          - Higher costs due to longer execution times
+          - More frequent cold starts
+          
+          Consider:
+          - Reducing concurrency or increasing CPU allocation
+          - Setting minimum instances to reduce cold starts
+          - Adjusting timeout settings if requests are timing out
+        transport:
+          type: pubsub
+          topic: projects/{project_id}/topics/custodian-notifications

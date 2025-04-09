@@ -1,0 +1,101 @@
+{
+  "policy": {
+    "name": "cloud-run-high-concurrency-services",
+    "resource": "gcp.cloud-run-service",
+    "description": "Identifies Cloud Run services with high concurrency settings but limited CPU allocation.\nThese services might experience performance issues and higher costs due to cold starts.\n",
+    "filters": [
+      {
+        "type": "value",
+        "key": "spec.template.spec.containerConcurrency",
+        "op": "greater-than",
+        "value": 50
+      },
+      {
+        "type": "value",
+        "key": "spec.template.spec.containers[0].resources.limits.cpu",
+        "op": "less-than",
+        "value": 1
+      },
+      {
+        "type": "metrics",
+        "name": "run.googleapis.com/container/instance_count",
+        "metric-key": "resource.labels.service_name",
+        "days": 7,
+        "reducer": "REDUCE_MAX",
+        "aligner": "ALIGN_MAX",
+        "op": "greater-than",
+        "value": 5
+      }
+    ],
+    "actions": [
+      {
+        "type": "notify",
+        "to": [
+          "devops@example.com",
+          "finops@example.com"
+        ],
+        "format": "json",
+        "subject": "Cloud Run Service with High Concurrency: {metadata.name}",
+        "body": "Cloud Run service {metadata.name} in project {project_id} has high concurrency but limited CPU.\n\nService details:\n- Name: {metadata.name}\n- Region: {metadata.labels.cloud.googleapis.com/location}\n- Concurrency: {spec.template.spec.containerConcurrency}\n- CPU: {spec.template.spec.containers[0].resources.limits.cpu}\n- Max instances: {spec.template.spec.containerConcurrency}\n\nThis configuration may lead to:\n- Increased latency due to CPU contention\n- Higher costs due to longer execution times\n- More frequent cold starts\n\nConsider:\n- Reducing concurrency or increasing CPU allocation\n- Setting minimum instances to reduce cold starts\n- Adjusting timeout settings if requests are timing out\n",
+        "transport": {
+          "type": "pubsub",
+          "topic": "projects/{project_id}/topics/custodian-notifications"
+        }
+      }
+    ]
+  },
+  "version": "0.9.43",
+  "execution": {
+    "id": "dd224148-c75b-4872-872b-f789a387d4c7",
+    "start": 1744206442.644068,
+    "end_time": 1744206442.6466439,
+    "duration": 0.0025758743286132812
+  },
+  "config": {
+    "region": "",
+    "regions": [],
+    "cache": "~/.cache/cloud-custodian.cache",
+    "profile": null,
+    "account_id": null,
+    "assume_role": null,
+    "session_policy": null,
+    "external_id": null,
+    "log_group": null,
+    "tracer": null,
+    "metrics_enabled": null,
+    "metrics": null,
+    "output_dir": "output/gcp/dev/cloudrun/20250409_064719",
+    "cache_period": 15,
+    "dryrun": false,
+    "authorization_file": null,
+    "subparser": "run",
+    "config": null,
+    "configs": [
+      "c7n_policies/gcp/dev/cloudrun_policies.yaml"
+    ],
+    "policy_filters": [],
+    "resource_types": [],
+    "verbose": null,
+    "quiet": null,
+    "debug": false,
+    "skip_validation": false,
+    "command": "c7n.commands.run",
+    "vars": null
+  },
+  "sys-stats": {},
+  "api-stats": {},
+  "metrics": [
+    {
+      "MetricName": "ResourceCount",
+      "Timestamp": "2025-04-09T06:47:22.646411",
+      "Value": 0,
+      "Unit": "Count"
+    },
+    {
+      "MetricName": "ResourceTime",
+      "Timestamp": "2025-04-09T06:47:22.646418",
+      "Value": 0.0016870498657226562,
+      "Unit": "Seconds"
+    }
+  ]
+}

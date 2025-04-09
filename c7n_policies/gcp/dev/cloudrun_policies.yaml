@@ -1,0 +1,170 @@
+policies:
+  # Find underutilized Cloud Run services (low request count)
+  - name: cloud-run-underutilized-services
+    resource: gcp.cloud-run-service
+    description: |
+      Identifies Cloud Run services that have low request counts over the past 30 days.
+      These services might be candidates for consolidation or removal to reduce costs.
+    filters:
+      - type: metrics
+        name: run.googleapis.com/request_count
+        metric-key: resource.labels.service_name  # Add the metric-key
+        days: 30
+        reducer: REDUCE_SUM
+        aligner: ALIGN_SUM
+        op: less-than
+        value: 1000  # Adjust this threshold based on your usage patterns
+      - not:
+          - type: value
+            key: metadata.labels
+            op: contains
+            value: essential:true
+    actions:
+      - type: notify
+        to:
+          - devops@example.com
+          - finops@example.com
+        format: json
+        subject: 'Underutilized Cloud Run Service: {metadata.name}'
+        body: |
+          Cloud Run service {metadata.name} in project {project_id} is potentially underutilized.
+          
+          Service details:
+          - Name: {metadata.name}
+          - Region: {metadata.labels.cloud.googleapis.com/location}
+          - Created: {metadata.creationTimestamp}
+          - URL: {status.url}
+          
+          This service has received fewer than 1,000 requests in the past 30 days.
+          Consider consolidating or removing this service if it's no longer needed.
+        transport:
+          type: pubsub
+          topic: projects/{project_id}/topics/custodian-notifications
+          
+  # Find over-provisioned Cloud Run services (high memory, low usage)
+  - name: cloud-run-overprovisioned-services
+    resource: gcp.cloud-run-service
+    description: |
+      Identifies Cloud Run services that have high memory allocation but low CPU utilization.
+      These services might be candidates for right-sizing to reduce costs.
+    filters:
+      - type: value
+        key: spec.template.spec.containers[0].resources.limits.memory
+        op: greater-than
+        value: 1Gi  # Services with more than 1GB memory
+      - type: metrics
+        name: run.googleapis.com/container/cpu/utilization
+        metric-key: resource.labels.service_name
+        days: 14
+        reducer: REDUCE_MAX
+        aligner: ALIGN_MAX
+        op: less-than
+        value: 0.5  # Max CPU utilization less than 50%
+    actions:
+      - type: notify
+        to:
+          - devops@example.com
+          - finops@example.com
+        format: json
+        subject: 'Over-provisioned Cloud Run Service: {metadata.name}'
+        body: |
+          Cloud Run service {metadata.name} in project {project_id} appears to be over-provisioned.
+          
+          Service details:
+          - Name: {metadata.name}
+          - Region: {metadata.labels.cloud.googleapis.com/location}
+          - Created: {metadata.creationTimestamp}
+          - Memory: {spec.template.spec.containers[0].resources.limits.memory}
+          - CPU: {spec.template.spec.containers[0].resources.limits.cpu}
+          
+          This service has high memory allocation but low CPU utilization (max under 50% in past 14 days).
+          Consider right-sizing this service to reduce costs:
+          - Reduce memory allocation
+          - Consider switching to CPU-based billing if appropriate
+        transport:
+          type: pubsub
+          topic: projects/{project_id}/topics/custodian-notifications
+  
+  # Find Cloud Run services with high concurrency but low CPU allocation
+  - name: cloud-run-high-concurrency-services
+    resource: gcp.cloud-run-service
+    description: |
+      Identifies Cloud Run services with high concurrency settings but limited CPU allocation.
+      These services might experience performance issues and higher costs due to cold starts.
+    filters:
+      - type: value
+        key: spec.template.spec.containerConcurrency
+        op: greater-than
+        value: 50  # High concurrency setting
+      - type: value
+        key: spec.template.spec.containers[0].resources.limits.cpu
+        op: less-than
+        value: 1  # Less than 1 CPU
+      - type: metrics
+        name: run.googleapis.com/container/instance_count
+        metric-key: resource.labels.service_name
+        days: 7
+        reducer: REDUCE_MAX
+        aligner: ALIGN_MAX
+        op: greater-than
+        value: 5  # Services that scale to multiple instances
+    actions:
+      - type: notify
+        to:
+          - devops@example.com
+          - finops@example.com
+        format: json
+        subject: 'Cloud Run Service with High Concurrency: {metadata.name}'
+        body: |
+          Cloud Run service {metadata.name} in project {project_id} has high concurrency but limited CPU.
+          
+          Service details:
+          - Name: {metadata.name}
+          - Region: {metadata.labels.cloud.googleapis.com/location}
+          - Concurrency: {spec.template.spec.containerConcurrency}
+          - CPU: {spec.template.spec.containers[0].resources.limits.cpu}
+          - Max instances: {spec.template.spec.containerConcurrency}
+          
+          This configuration may lead to:
+          - Increased latency due to CPU contention
+          - Higher costs due to longer execution times
+          - More frequent cold starts
+          
+          Consider:
+          - Reducing concurrency or increasing CPU allocation
+          - Setting minimum instances to reduce cold starts
+          - Adjusting timeout settings if requests are timing out
+        transport:
+          type: pubsub
+          topic: projects/{project_id}/topics/custodian-notifications
+          
+  # Analyze all Cloud Run services in a specific region
+  - name: cloud-run-region-analyzer
+    resource: gcp.cloud-run-service
+    description: |
+      Analyzes all Cloud Run services in a specific region to identify cost optimization opportunities.
+      This policy consolidates multiple Cloud Run-specific checks into a comprehensive overview.
+    filters:
+      - type: value
+        key: metadata.labels.cloud.googleapis.com/location
+        value: "$REGION"  # Replace with actual region or use parameter
+    actions:
+      - type: notify
+        to:
+          - devops@example.com
+          - finops@example.com
+        format: json
+        subject: 'Cloud Run Region Analysis'
+        body: |
+          Region: {metadata.labels.cloud.googleapis.com/location}
+          Services Found: {report.services_count}
+          
+          For services in this region, we recommend running the following checks:
+          1. Check for underutilized services
+          2. Check for over-provisioned services
+          3. Check for high-concurrency services with limited CPU
+          
+          Note: These checks will be automatically triggered when this policy runs.
+        transport:
+          type: pubsub
+          topic: projects/{project_id}/topics/custodian-notifications

@@ -1,0 +1,78 @@
+{
+  "policy": {
+    "name": "cloud-run-region-analyzer",
+    "resource": "gcp.cloud-run-service",
+    "description": "Analyzes all Cloud Run services in a specific region to identify cost optimization opportunities.\nThis policy consolidates multiple Cloud Run-specific checks into a comprehensive overview.\n",
+    "filters": [
+      {
+        "type": "value",
+        "key": "metadata.labels.cloud.googleapis.com/location",
+        "value": "$REGION"
+      }
+    ],
+    "actions": [
+      {
+        "type": "notify",
+        "to": [
+          "devops@example.com",
+          "finops@example.com"
+        ],
+        "format": "json",
+        "subject": "Cloud Run Region Analysis",
+        "body": "Region: {metadata.labels.cloud.googleapis.com/location}\nServices Found: {report.services_count}\n\nFor services in this region, we recommend running the following checks:\n1. Check for underutilized services\n2. Check for over-provisioned services\n3. Check for high-concurrency services with limited CPU\n\nNote: These checks will be automatically triggered when this policy runs.\n",
+        "transport": {
+          "type": "pubsub",
+          "topic": "projects/{project_id}/topics/custodian-notifications"
+        }
+      }
+    ]
+  },
+  "version": "0.9.43",
+  "execution": {
+    "id": "8df2f60a-9767-4083-9e00-11f44696d1ed",
+    "start": 1744206693.2963011,
+    "end_time": 1744206693.2969038,
+    "duration": 0.00060272216796875
+  },
+  "config": {
+    "region": "",
+    "regions": [],
+    "cache": "~/.cache/cloud-custodian.cache",
+    "profile": null,
+    "account_id": null,
+    "assume_role": null,
+    "session_policy": null,
+    "external_id": null,
+    "log_group": null,
+    "tracer": null,
+    "metrics_enabled": null,
+    "metrics": null,
+    "output_dir": "output/gcp/dev/cloudrun/20250409_065131",
+    "cache_period": 15,
+    "dryrun": false,
+    "authorization_file": null,
+    "subparser": "run",
+    "config": null,
+    "configs": [
+      "c7n_policies/gcp/dev/cloudrun_policies.yaml"
+    ],
+    "policy_filters": [],
+    "resource_types": [],
+    "verbose": null,
+    "quiet": null,
+    "debug": false,
+    "skip_validation": false,
+    "command": "c7n.commands.run",
+    "vars": null
+  },
+  "sys-stats": {},
+  "api-stats": {},
+  "metrics": [
+    {
+      "MetricName": "PolicyException",
+      "Timestamp": "2025-04-09T06:51:33.296899",
+      "Value": 1,
+      "Unit": "Count"
+    }
+  ]
+}

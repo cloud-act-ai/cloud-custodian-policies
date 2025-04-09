@@ -1,0 +1,28 @@
+# Development Environment Configuration
+
+# GCP Configuration
+gcp:
+  project_id: "finops360-dev-2025"
+  region: "us-central1"
+  pubsub:
+    topic: "custodian-notifications"
+  bigquery:
+    dataset: "billing_export"
+    table: "gcp_billing_export_v1"
+  
+# Azure Configuration
+azure:
+  subscription_id: "your-dev-subscription-id"
+  resource_group: "cloud-custodian-rg"
+  storage_account: "custodiandevlogs"
+  container: "policies"
+  
+# Notification Settings
+notifications:
+  email:
+    recipients:
+      - dataops@example.com
+      - finops@example.com
+  slack:
+    webhook_url: "https://hooks.slack.com/services/XXXXX/YYYYY/ZZZZZ"
+    channel: "#cloud-cost-alerts"
