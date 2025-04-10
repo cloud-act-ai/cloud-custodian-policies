@@ -1,0 +1,74 @@
+{
+  "policy": {
+    "description": "Identifies BigQuery tables larger than 10GB that are not partitioned.\nPartitioning large tables can significantly improve query performance and reduce costs.\n",
+    "filters": [
+      {
+        "key": "numBytes",
+        "op": "greater-than",
+        "type": "value",
+        "value": 10737418240
+      },
+      {
+        "key": "timePartitioning",
+        "type": "value",
+        "value": null
+      }
+    ],
+    "name": "bigquery-large-unpartitioned-tables",
+    "resource": "gcp.bq-table"
+  },
+  "version": "0.9.43",
+  "execution": {
+    "id": "2aafdba1-1d1a-4ad4-9826-d0bd8b431d81",
+    "start": 1744304042.319725,
+    "end_time": 1744304042.319969,
+    "duration": 0.00024390220642089844
+  },
+  "config": {
+    "region": "",
+    "regions": [],
+    "cache": "~/.cache/cloud-custodian.cache",
+    "profile": null,
+    "account_id": null,
+    "assume_role": null,
+    "session_policy": null,
+    "external_id": null,
+    "log_group": null,
+    "tracer": null,
+    "metrics_enabled": null,
+    "metrics": null,
+    "output_dir": "/Users/gurukallam/projects/finops360/cloud-custodian-policies/output/gcp/dev/bigquery/finops360-prod-2025/20250410_095402",
+    "cache_period": 15,
+    "dryrun": true,
+    "authorization_file": null,
+    "subparser": "run",
+    "config": null,
+    "configs": [
+      "/var/folders/2t/pq6d_3893yq39cjz9qc9j4qm0000gn/T/tmp892rpaat.yaml"
+    ],
+    "policy_filters": [],
+    "resource_types": [],
+    "verbose": null,
+    "quiet": null,
+    "debug": false,
+    "skip_validation": false,
+    "command": "c7n.commands.run",
+    "vars": null
+  },
+  "sys-stats": {},
+  "api-stats": {},
+  "metrics": [
+    {
+      "MetricName": "ResourceCount",
+      "Timestamp": "2025-04-10T09:54:02.319915",
+      "Value": 0,
+      "Unit": "Count"
+    },
+    {
+      "MetricName": "ResourceTime",
+      "Timestamp": "2025-04-10T09:54:02.319917",
+      "Value": 0.00011515617370605469,
+      "Unit": "Seconds"
+    }
+  ]
+}

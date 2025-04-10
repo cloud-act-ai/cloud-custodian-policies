@@ -1,0 +1,68 @@
+{
+  "policy": {
+    "description": "This policy analyzes all tables within a dataset and identifies optimization opportunities.\nIt collects information about table sizes, access patterns, and configuration.\n",
+    "filters": [
+      {
+        "key": "datasetReference.datasetId",
+        "type": "value",
+        "value": "$DATASET_ID"
+      }
+    ],
+    "name": "bigquery-dataset-analyzer",
+    "resource": "gcp.bq-dataset"
+  },
+  "version": "0.9.43",
+  "execution": {
+    "id": "81dd8e37-c722-4b7d-af8e-17e0ac9b9ec7",
+    "start": 1744304042.320103,
+    "end_time": 1744304042.320363,
+    "duration": 0.0002601146697998047
+  },
+  "config": {
+    "region": "",
+    "regions": [],
+    "cache": "~/.cache/cloud-custodian.cache",
+    "profile": null,
+    "account_id": null,
+    "assume_role": null,
+    "session_policy": null,
+    "external_id": null,
+    "log_group": null,
+    "tracer": null,
+    "metrics_enabled": null,
+    "metrics": null,
+    "output_dir": "/Users/gurukallam/projects/finops360/cloud-custodian-policies/output/gcp/dev/bigquery/finops360-prod-2025/20250410_095402",
+    "cache_period": 15,
+    "dryrun": true,
+    "authorization_file": null,
+    "subparser": "run",
+    "config": null,
+    "configs": [
+      "/var/folders/2t/pq6d_3893yq39cjz9qc9j4qm0000gn/T/tmp892rpaat.yaml"
+    ],
+    "policy_filters": [],
+    "resource_types": [],
+    "verbose": null,
+    "quiet": null,
+    "debug": false,
+    "skip_validation": false,
+    "command": "c7n.commands.run",
+    "vars": null
+  },
+  "sys-stats": {},
+  "api-stats": {},
+  "metrics": [
+    {
+      "MetricName": "ResourceCount",
+      "Timestamp": "2025-04-10T09:54:02.320301",
+      "Value": 0,
+      "Unit": "Count"
+    },
+    {
+      "MetricName": "ResourceTime",
+      "Timestamp": "2025-04-10T09:54:02.320303",
+      "Value": 0.00012493133544921875,
+      "Unit": "Seconds"
+    }
+  ]
+}

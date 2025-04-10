@@ -1,0 +1,1 @@
+2025-04-10 09:54:02,319 - custodian.policy - INFO - policy:bigquery-idle-tables resource:gcp.bq-table region: count:0 time:0.00

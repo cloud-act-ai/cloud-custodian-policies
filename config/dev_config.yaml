@@ -2,12 +2,48 @@
 
 # GCP Configuration
 gcp:
+  # Primary project ID (used as default)
   project_id: "finops360-dev-2025"
+  
+  # List of projects to analyze
+  projects:
+    - id: "finops360-dev-2025"
+      name: "Development Project"
+      environment: "dev"
+      owner: "DevOps Team"
+    # - id: "finops360-test-2025"
+    #   name: "Test Project"
+    #   environment: "test"
+    #   owner: "QA Team"
+    - id: "finops360-prod-2025"
+      name: "Production Project"
+      environment: "prod"
+      owner: "SRE Team"
+  
+  # Default region
   region: "us-central1"
-  pubsub:
-    topic: "custodian-notifications"
+  
+  # Other regions to analyze
+  regions:
+    - "us-central1"
+    - "us-east1"
+    - "europe-west1"
+  
+  # BigQuery configuration
   bigquery:
+    # Default dataset for billing export
     dataset: "test"
+    
+    # List of datasets to analyze across projects
+    datasets:
+      - project_id: "finops360-dev-2025"
+        datasets:
+          - "test"
+      #     - "billing_export"
+      # - project_id: "finops360-data-2025"
+      #   datasets:
+      #     - "analytics"
+      #     - "reporting"
 
   
 # Azure Configuration

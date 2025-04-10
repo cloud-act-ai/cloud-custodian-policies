@@ -134,7 +134,7 @@ This repository provides a **production-ready** approach to address these challe
 
 You can run the policies using several methods:
 
-### Using Makefile:
+### Single-Project Mode:
 
 Run all GCP policies:
 ```bash
@@ -179,6 +179,43 @@ make run-vm-tags PROJECT=my-project-id TAGS="env owner cost-center team"
 Analyze all BigQuery datasets in a project:
 ```bash
 make run-bq-project PROJECT=my-project-id
+```
+
+### Multi-Project Mode:
+
+Run policies across all projects defined in config/dev_config.yaml:
+```bash
+make run-multi TYPE=compute       # Run VM policies across all projects
+make run-multi TYPE=cloudrun      # Run Cloud Run policies across all projects
+make run-multi TYPE=bigquery      # Run BigQuery policies across all projects
+make run-multi TYPE=all           # Run all policy types across all projects
+```
+
+Run policies for specific projects:
+```bash
+make run-multi TYPE=compute PROJECTS="project-id-1 project-id-2"
+```
+
+### Multi-Dataset Mode:
+
+Analyze all datasets across all projects (as defined in config):
+```bash
+make run-multi-datasets
+```
+
+Analyze all datasets in specific projects:
+```bash
+make run-multi-datasets PROJECTS="project-id-1 project-id-2"
+```
+
+Analyze specific datasets across all projects:
+```bash
+make run-multi-datasets DATASETS="dataset1 dataset2"
+```
+
+Analyze specific datasets in specific projects:
+```bash
+make run-multi-datasets PROJECTS="project-id-1 project-id-2" DATASETS="dataset1 dataset2"
 ```
 
 ### Using Shell Script:

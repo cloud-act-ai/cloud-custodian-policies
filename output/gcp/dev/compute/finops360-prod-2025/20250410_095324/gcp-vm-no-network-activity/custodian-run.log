@@ -1,0 +1,36 @@
+2025-04-10 09:53:25,272 - custodian.output - ERROR - Error while executing policy
+Traceback (most recent call last):
+  File "/Users/gurukallam/projects/finops360/cloud-custodian-policies/venv/lib/python3.13/site-packages/c7n/policy.py", line 330, in run
+    resources = self.policy.resource_manager.resources()
+  File "/Users/gurukallam/projects/finops360/cloud-custodian-policies/venv/lib/python3.13/site-packages/c7n_gcp/query.py", line 215, in resources
+    resources = self.filter_resources(resources)
+  File "/Users/gurukallam/projects/finops360/cloud-custodian-policies/venv/lib/python3.13/site-packages/c7n/manager.py", line 113, in filter_resources
+    resources = f.process(resources, event)
+  File "/Users/gurukallam/projects/finops360/cloud-custodian-policies/venv/lib/python3.13/site-packages/c7n_gcp/filters/metrics.py", line 137, in process
+    metric_list = client.execute_query('list',
+        {'name': 'projects/' + project, **query_params})
+  File "/Users/gurukallam/projects/finops360/cloud-custodian-policies/venv/lib/python3.13/site-packages/c7n_gcp/client.py", line 489, in execute_query
+    return self._execute(request)
+           ~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/gurukallam/projects/finops360/cloud-custodian-policies/venv/lib/python3.13/site-packages/retrying.py", line 56, in wrapped_f
+    return Retrying(*dargs, **dkw).call(f, *args, **kw)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/Users/gurukallam/projects/finops360/cloud-custodian-policies/venv/lib/python3.13/site-packages/retrying.py", line 257, in call
+    return attempt.get(self._wrap_exception)
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gurukallam/projects/finops360/cloud-custodian-policies/venv/lib/python3.13/site-packages/retrying.py", line 301, in get
+    six.reraise(self.value[0], self.value[1], self.value[2])
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gurukallam/projects/finops360/cloud-custodian-policies/venv/lib/python3.13/site-packages/six.py", line 724, in reraise
+    raise value
+  File "/Users/gurukallam/projects/finops360/cloud-custodian-policies/venv/lib/python3.13/site-packages/retrying.py", line 251, in call
+    attempt = Attempt(fn(*args, **kwargs), attempt_number, False)
+                      ~~^^^^^^^^^^^^^^^^^
+  File "/Users/gurukallam/projects/finops360/cloud-custodian-policies/venv/lib/python3.13/site-packages/c7n_gcp/client.py", line 505, in _execute
+    return request.execute(http=self.http, num_retries=self._num_retries)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/gurukallam/projects/finops360/cloud-custodian-policies/venv/lib/python3.13/site-packages/googleapiclient/_helpers.py", line 130, in positional_wrapper
+    return wrapped(*args, **kwargs)
+  File "/Users/gurukallam/projects/finops360/cloud-custodian-policies/venv/lib/python3.13/site-packages/googleapiclient/http.py", line 938, in execute
+    raise HttpError(resp, content, uri=self.uri)
+googleapiclient.errors.HttpError: <HttpError 403 when requesting https://monitoring.googleapis.com/v3/projects/finops360-prod-2025/timeSeries?filter=metric.type+%3D+%22compute.googleapis.com%2Finstance%2Fnetwork%2Freceived_bytes_count%22+AND+%28+resource.labels.instance_id+%3D+%22instance-20250409-135727%22+%29+&interval.startTime=2025-04-03T16%3A53%3A25Z&interval.endTime=2025-04-10T16%3A53%3A25Z&aggregation.alignmentPeriod=604800.0s&aggregation.perSeriesAligner=ALIGN_SUM&aggregation.crossSeriesReducer=REDUCE_SUM&view=FULL&alt=json returned "Permission monitoring.timeSeries.list denied (or the resource may not exist).". Details: "Permission monitoring.timeSeries.list denied (or the resource may not exist).">

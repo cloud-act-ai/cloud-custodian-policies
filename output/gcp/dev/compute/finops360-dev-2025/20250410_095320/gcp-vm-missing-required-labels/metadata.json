@@ -1,0 +1,82 @@
+{
+  "policy": {
+    "description": "Identifies Google Compute Engine instances (VMs) that are missing required labels.\nRequired labels help with cost allocation, ownership tracking, and resource governance.\nThis policy checks for the absence of 'env' and 'owner' labels.\n",
+    "filters": [
+      {
+        "or": [
+          {
+            "key": "labels",
+            "type": "value",
+            "value": null
+          },
+          {
+            "key": "labels.env",
+            "type": "value",
+            "value": null
+          },
+          {
+            "key": "labels.owner",
+            "type": "value",
+            "value": null
+          }
+        ]
+      }
+    ],
+    "name": "gcp-vm-missing-required-labels",
+    "resource": "gcp.instance"
+  },
+  "version": "0.9.43",
+  "execution": {
+    "id": "c05f0e9d-8fd7-430f-b80b-33553cda613e",
+    "start": 1744304001.099103,
+    "end_time": 1744304002.016555,
+    "duration": 0.9174520969390869
+  },
+  "config": {
+    "region": "",
+    "regions": [],
+    "cache": "~/.cache/cloud-custodian.cache",
+    "profile": null,
+    "account_id": null,
+    "assume_role": null,
+    "session_policy": null,
+    "external_id": null,
+    "log_group": null,
+    "tracer": null,
+    "metrics_enabled": null,
+    "metrics": null,
+    "output_dir": "/Users/gurukallam/projects/finops360/cloud-custodian-policies/output/gcp/dev/compute/finops360-dev-2025/20250410_095320",
+    "cache_period": 15,
+    "dryrun": true,
+    "authorization_file": null,
+    "subparser": "run",
+    "config": null,
+    "configs": [
+      "/var/folders/2t/pq6d_3893yq39cjz9qc9j4qm0000gn/T/tmp9zce6xq8.yaml"
+    ],
+    "policy_filters": [],
+    "resource_types": [],
+    "verbose": null,
+    "quiet": null,
+    "debug": false,
+    "skip_validation": false,
+    "command": "c7n.commands.run",
+    "vars": null
+  },
+  "sys-stats": {},
+  "api-stats": {},
+  "metrics": [
+    {
+      "MetricName": "ResourceCount",
+      "Timestamp": "2025-04-10T09:53:22.015373",
+      "Value": 1,
+      "Unit": "Count"
+    },
+    {
+      "MetricName": "ResourceTime",
+      "Timestamp": "2025-04-10T09:53:22.015393",
+      "Value": 0.915581226348877,
+      "Unit": "Seconds"
+    }
+  ]
+}

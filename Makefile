@@ -1,4 +1,4 @@
-.PHONY: install run-gcp run-azure run-analysis run-bigquery run-cloudrun html-report
+.PHONY: install run-gcp run-azure run-analysis run-bigquery run-cloudrun html-report run-multi run-multi-datasets
 
 # Variables
 VENV_NAME = venv
@@ -91,6 +91,30 @@ html-report:
 		exit 1; \
 	fi
 	$(PYTHON) scripts/generate_html_reports.py --output-dir $(REPORT_DIR)
+	
+run-multi:
+	@echo "Running policies across multiple projects..."
+	@if [ -z "$(TYPE)" ]; then \
+		echo "Error: TYPE parameter is required. Usage: make run-multi TYPE=compute|cloudrun|bigquery|all [PROJECTS='project1 project2']"; \
+		exit 1; \
+	fi
+	@if [ -z "$(PROJECTS)" ]; then \
+		$(PYTHON) scripts/run_multi_project.py --type $(TYPE); \
+	else \
+		$(PYTHON) scripts/run_multi_project.py --type $(TYPE) --projects $(PROJECTS); \
+	fi
+	
+run-multi-datasets:
+	@echo "Running BigQuery analysis across multiple datasets..."
+	@if [ -z "$(PROJECTS)" ] && [ -z "$(DATASETS)" ]; then \
+		$(PYTHON) scripts/run_multi_project.py --type datasets; \
+	elif [ -z "$(DATASETS)" ]; then \
+		$(PYTHON) scripts/run_multi_project.py --type datasets --projects $(PROJECTS); \
+	elif [ -z "$(PROJECTS)" ]; then \
+		$(PYTHON) scripts/run_multi_project.py --type datasets --datasets $(DATASETS); \
+	else \
+		$(PYTHON) scripts/run_multi_project.py --type datasets --projects $(PROJECTS) --datasets $(DATASETS); \
+	fi
 
 clean:
 	@echo "Cleaning up..."

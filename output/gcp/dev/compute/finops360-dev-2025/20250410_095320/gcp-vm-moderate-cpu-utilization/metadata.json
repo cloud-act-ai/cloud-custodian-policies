@@ -1,0 +1,97 @@
+{
+  "policy": {
+    "description": "Identifies Google Compute Engine instances with moderate CPU utilization (10-50%).\nThese VMs might be candidates for rightsizing to a smaller machine type.\n",
+    "filters": [
+      {
+        "key": "status",
+        "type": "value",
+        "value": "RUNNING"
+      },
+      {
+        "aligner": "ALIGN_MEAN",
+        "days": 30,
+        "metric-key": "resource.labels.instance_id",
+        "name": "compute.googleapis.com/instance/cpu/utilization",
+        "op": "greater-than",
+        "reducer": "REDUCE_MEAN",
+        "type": "metrics",
+        "value": 0.1
+      },
+      {
+        "aligner": "ALIGN_MEAN",
+        "days": 30,
+        "metric-key": "resource.labels.instance_id",
+        "name": "compute.googleapis.com/instance/cpu/utilization",
+        "op": "less-than",
+        "reducer": "REDUCE_MEAN",
+        "type": "metrics",
+        "value": 0.5
+      },
+      {
+        "not": [
+          {
+            "key": "labels.preserve",
+            "type": "value",
+            "value": "true"
+          }
+        ]
+      }
+    ],
+    "name": "gcp-vm-moderate-cpu-utilization",
+    "resource": "gcp.instance"
+  },
+  "version": "0.9.43",
+  "execution": {
+    "id": "e0a8b000-6906-4673-852f-eb2bf99cc512",
+    "start": 1744304003.236956,
+    "end_time": 1744304003.668792,
+    "duration": 0.4318361282348633
+  },
+  "config": {
+    "region": "",
+    "regions": [],
+    "cache": "~/.cache/cloud-custodian.cache",
+    "profile": null,
+    "account_id": null,
+    "assume_role": null,
+    "session_policy": null,
+    "external_id": null,
+    "log_group": null,
+    "tracer": null,
+    "metrics_enabled": null,
+    "metrics": null,
+    "output_dir": "/Users/gurukallam/projects/finops360/cloud-custodian-policies/output/gcp/dev/compute/finops360-dev-2025/20250410_095320",
+    "cache_period": 15,
+    "dryrun": true,
+    "authorization_file": null,
+    "subparser": "run",
+    "config": null,
+    "configs": [
+      "/var/folders/2t/pq6d_3893yq39cjz9qc9j4qm0000gn/T/tmp9zce6xq8.yaml"
+    ],
+    "policy_filters": [],
+    "resource_types": [],
+    "verbose": null,
+    "quiet": null,
+    "debug": false,
+    "skip_validation": false,
+    "command": "c7n.commands.run",
+    "vars": null
+  },
+  "sys-stats": {},
+  "api-stats": {},
+  "metrics": [
+    {
+      "MetricName": "ResourceCount",
+      "Timestamp": "2025-04-10T09:53:23.667900",
+      "Value": 0,
+      "Unit": "Count"
+    },
+    {
+      "MetricName": "ResourceTime",
+      "Timestamp": "2025-04-10T09:53:23.667922",
+      "Value": 0.4302701950073242,
+      "Unit": "Seconds"
+    }
+  ]
+}

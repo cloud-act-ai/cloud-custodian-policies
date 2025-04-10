@@ -1,0 +1,82 @@
+{
+  "policy": {
+    "description": "Identifies Google Compute Engine instances with persistent disks that are\nsignificantly underutilized (low I/O operations but high capacity).\n",
+    "filters": [
+      {
+        "key": "status",
+        "type": "value",
+        "value": "RUNNING"
+      },
+      {
+        "aligner": "ALIGN_MEAN",
+        "days": 14,
+        "metric-key": "resource.labels.instance_id",
+        "name": "compute.googleapis.com/instance/disk/read_ops_count",
+        "op": "less-than",
+        "reducer": "REDUCE_MEAN",
+        "type": "metrics",
+        "value": 10
+      },
+      {
+        "aligner": "ALIGN_MEAN",
+        "days": 14,
+        "metric-key": "resource.labels.instance_id",
+        "name": "compute.googleapis.com/instance/disk/write_ops_count",
+        "op": "less-than",
+        "reducer": "REDUCE_MEAN",
+        "type": "metrics",
+        "value": 10
+      }
+    ],
+    "name": "gcp-vm-oversized-disks",
+    "resource": "gcp.instance"
+  },
+  "version": "0.9.43",
+  "execution": {
+    "id": "7a6de708-57d4-437f-86fb-67ebf66337e8",
+    "start": 1744304005.4765282,
+    "end_time": 1744304005.67653,
+    "duration": 0.20000171661376953
+  },
+  "config": {
+    "region": "",
+    "regions": [],
+    "cache": "~/.cache/cloud-custodian.cache",
+    "profile": null,
+    "account_id": null,
+    "assume_role": null,
+    "session_policy": null,
+    "external_id": null,
+    "log_group": null,
+    "tracer": null,
+    "metrics_enabled": null,
+    "metrics": null,
+    "output_dir": "/Users/gurukallam/projects/finops360/cloud-custodian-policies/output/gcp/dev/compute/finops360-prod-2025/20250410_095324",
+    "cache_period": 15,
+    "dryrun": true,
+    "authorization_file": null,
+    "subparser": "run",
+    "config": null,
+    "configs": [
+      "/var/folders/2t/pq6d_3893yq39cjz9qc9j4qm0000gn/T/tmpbnqpd_p2.yaml"
+    ],
+    "policy_filters": [],
+    "resource_types": [],
+    "verbose": null,
+    "quiet": null,
+    "debug": false,
+    "skip_validation": false,
+    "command": "c7n.commands.run",
+    "vars": null
+  },
+  "sys-stats": {},
+  "api-stats": {},
+  "metrics": [
+    {
+      "MetricName": "PolicyException",
+      "Timestamp": "2025-04-10T09:53:25.676503",
+      "Value": 1,
+      "Unit": "Count"
+    }
+  ]
+}
