@@ -1,4 +1,4 @@
-.PHONY: install run-gcp run-azure run-analysis run-bigquery run-cloudrun
+.PHONY: install run-gcp run-azure run-analysis run-bigquery run-cloudrun html-report
 
 # Variables
 VENV_NAME = venv
@@ -23,14 +23,17 @@ run-azure:
 run-bigquery:
 	@echo "Running only BigQuery policies..."
 	$(CUSTODIAN) run --dryrun --output-dir output/gcp/dev/bigquery/$(shell date +%Y%m%d_%H%M%S) c7n_policies/gcp/dev/bigquery_policies.yaml
+	@echo "To generate HTML reports, run: $(CUSTODIAN) report -s output/gcp/dev/bigquery/$(shell date +%Y%m%d_%H%M%S) --output-dir output/gcp/dev/bigquery/$(shell date +%Y%m%d_%H%M%S) c7n_policies/gcp/dev/bigquery_policies.yaml"
 
 run-cloudrun:
 	@echo "Running only Cloud Run policies..."
 	$(CUSTODIAN) run --dryrun --output-dir output/gcp/dev/cloudrun/$(shell date +%Y%m%d_%H%M%S) c7n_policies/gcp/dev/cloudrun_policies.yaml
+	@echo "To generate HTML reports, run: $(CUSTODIAN) report -s output/gcp/dev/cloudrun/$(shell date +%Y%m%d_%H%M%S) --output-dir output/gcp/dev/cloudrun/$(shell date +%Y%m%d_%H%M%S) c7n_policies/gcp/dev/cloudrun_policies.yaml"
 	
 run-compute:
 	@echo "Running only Compute Engine (VM) policies..."
 	$(CUSTODIAN) run --dryrun --output-dir output/gcp/dev/compute/$(shell date +%Y%m%d_%H%M%S) c7n_policies/gcp/dev/compute_policies.yaml
+	@echo "To generate HTML reports, run: $(CUSTODIAN) report -s output/gcp/dev/compute/$(shell date +%Y%m%d_%H%M%S) --output-dir output/gcp/dev/compute/$(shell date +%Y%m%d_%H%M%S) c7n_policies/gcp/dev/compute_policies.yaml"
 
 run-dataset:
 	@echo "Running BigQuery dataset analysis..."
@@ -80,6 +83,14 @@ run-analysis:
 	@echo "Running cost analysis..."
 	$(PYTHON) src/analysis/bigquery_cost_analysis.py
 	$(PYTHON) src/analysis/azure_cost_analysis.py
+
+html-report:
+	@echo "Generating HTML reports..."
+	@if [ -z "$(REPORT_DIR)" ]; then \
+		echo "Error: REPORT_DIR parameter is required. Usage: make html-report REPORT_DIR=output/gcp/dev/compute/YYYYMMDD_HHMMSS"; \
+		exit 1; \
+	fi
+	$(PYTHON) scripts/generate_html_reports.py --output-dir $(REPORT_DIR)
 
 clean:
 	@echo "Cleaning up..."

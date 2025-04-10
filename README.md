@@ -248,8 +248,46 @@ Common issues and solutions:
 After running the policies, you'll find the results in the `output/gcp/dev/YYYYMMDD_HHMMSS/` directory. Each policy generates:
 
 - `resources.json`: List of resources that matched the policy filters
-- `resources.html`: HTML report of the resources
+- `resources.html`: HTML report of the resources (interactive web page with detailed results)
 - Logs and other execution details
+
+### Generating and Viewing HTML Reports
+
+To generate HTML reports from your policy results:
+
+1. Run a policy first (if you haven't already):
+   ```bash
+   make run-compute
+   ```
+
+2. Note the output directory path, which will look like:
+   ```
+   output/gcp/dev/compute/YYYYMMDD_HHMMSS
+   ```
+
+3. Generate HTML reports for that output directory:
+   ```bash
+   make html-report REPORT_DIR=output/gcp/dev/compute/YYYYMMDD_HHMMSS
+   ```
+
+4. Open the generated HTML files in any web browser:
+   ```bash
+   # macOS
+   open output/gcp/dev/compute/YYYYMMDD_HHMMSS/policy-name/report.html
+   
+   # Linux
+   xdg-open output/gcp/dev/compute/YYYYMMDD_HHMMSS/policy-name/report.html
+   
+   # Or navigate to the specific policy output directory
+   cd output/gcp/dev/compute/YYYYMMDD_HHMMSS/policy-name/
+   open report.html
+   ```
+
+The HTML report shows:
+- Policy details and datetime of the report
+- Number of resources that matched the policy
+- Each resource with its key attributes in a table format
+- Full JSON data for each resource
 
 ## Adding New Policies
 
