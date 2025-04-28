@@ -1,0 +1,2 @@
+2025-04-28 08:51:55,188 - custodian.filters - INFO - No metrics found for compute.googleapis.com/instance/network/received_bytes_count.ALIGN_SUM.REDUCE_SUM
+2025-04-28 08:51:55,189 - custodian.policy - INFO - policy:gcp-vm-no-network-activity resource:gcp.instance region: count:0 time:0.51

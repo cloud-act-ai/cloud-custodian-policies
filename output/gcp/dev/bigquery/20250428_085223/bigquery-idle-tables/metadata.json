@@ -1,0 +1,80 @@
+{
+  "policy": {
+    "description": "Finds BigQuery tables that have not been accessed in the last 90 days.\nThese tables might be candidates for archiving to reduce storage costs.\n",
+    "filters": [
+      {
+        "key": "lastModifiedTime",
+        "op": "greater-than",
+        "type": "value",
+        "value": 90,
+        "value_type": "age"
+      },
+      {
+        "not": [
+          {
+            "key": "tableReference.tableId",
+            "op": "regex",
+            "type": "value",
+            "value": "^(archive|backup).*"
+          }
+        ]
+      }
+    ],
+    "name": "bigquery-idle-tables",
+    "resource": "gcp.bq-table"
+  },
+  "version": "0.9.44",
+  "execution": {
+    "id": "ebd1f42a-1878-47af-bcc9-1fccdabfff56",
+    "start": 1745855548.500374,
+    "end_time": 1745855548.5015838,
+    "duration": 0.0012097358703613281
+  },
+  "config": {
+    "region": "",
+    "regions": [],
+    "cache": "~/.cache/cloud-custodian.cache",
+    "profile": null,
+    "account_id": null,
+    "assume_role": null,
+    "session_policy": null,
+    "external_id": null,
+    "log_group": null,
+    "tracer": null,
+    "metrics_enabled": null,
+    "metrics": null,
+    "output_dir": "/Users/gurukallam/projects/finops360/cloud-custodian-policies/output/gcp/dev/bigquery/20250428_085223",
+    "cache_period": 15,
+    "dryrun": true,
+    "authorization_file": null,
+    "subparser": "run",
+    "config": null,
+    "configs": [
+      "/var/folders/2t/pq6d_3893yq39cjz9qc9j4qm0000gn/T/tmpgio7n5d3.yaml"
+    ],
+    "policy_filters": [],
+    "resource_types": [],
+    "verbose": null,
+    "quiet": null,
+    "debug": false,
+    "skip_validation": false,
+    "command": "c7n.commands.run",
+    "vars": null
+  },
+  "sys-stats": {},
+  "api-stats": {},
+  "metrics": [
+    {
+      "MetricName": "ResourceCount",
+      "Timestamp": "2025-04-28T08:52:28.501401",
+      "Value": 0,
+      "Unit": "Count"
+    },
+    {
+      "MetricName": "ResourceTime",
+      "Timestamp": "2025-04-28T08:52:28.501408",
+      "Value": 0.0007040500640869141,
+      "Unit": "Seconds"
+    }
+  ]
+}

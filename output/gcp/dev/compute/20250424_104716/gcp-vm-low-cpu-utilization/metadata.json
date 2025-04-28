@@ -1,0 +1,87 @@
+{
+  "policy": {
+    "name": "gcp-vm-low-cpu-utilization",
+    "resource": "gcp.instance",
+    "description": "Identifies Google Compute Engine instances with low CPU utilization.\nThese VMs might be oversized or unused, and are candidates for rightsizing or termination.\n",
+    "filters": [
+      {
+        "type": "value",
+        "key": "status",
+        "value": "RUNNING"
+      },
+      {
+        "type": "metrics",
+        "name": "compute.googleapis.com/instance/cpu/utilization",
+        "metric-key": "resource.labels.instance_id",
+        "days": 14,
+        "reducer": "REDUCE_MEAN",
+        "aligner": "ALIGN_MEAN",
+        "op": "less-than",
+        "value": 0.1
+      },
+      {
+        "not": [
+          {
+            "type": "value",
+            "key": "labels.preserve",
+            "value": "true"
+          }
+        ]
+      }
+    ]
+  },
+  "version": "0.9.44",
+  "execution": {
+    "id": "6c8c3654-d243-48c9-a29f-d656cd8d38e8",
+    "start": 1745516840.756129,
+    "end_time": 1745516841.774642,
+    "duration": 1.0185129642486572
+  },
+  "config": {
+    "region": "",
+    "regions": [],
+    "cache": "~/.cache/cloud-custodian.cache",
+    "profile": null,
+    "account_id": null,
+    "assume_role": null,
+    "session_policy": null,
+    "external_id": null,
+    "log_group": null,
+    "tracer": null,
+    "metrics_enabled": null,
+    "metrics": null,
+    "output_dir": "output/gcp/dev/compute/20250424_104716",
+    "cache_period": 15,
+    "dryrun": true,
+    "authorization_file": null,
+    "subparser": "run",
+    "config": null,
+    "configs": [
+      "c7n_policies/gcp/dev/compute_policies.yaml"
+    ],
+    "policy_filters": [],
+    "resource_types": [],
+    "verbose": null,
+    "quiet": null,
+    "debug": false,
+    "skip_validation": false,
+    "command": "c7n.commands.run",
+    "vars": null
+  },
+  "sys-stats": {},
+  "api-stats": {},
+  "metrics": [
+    {
+      "MetricName": "ResourceCount",
+      "Timestamp": "2025-04-24T10:47:21.773816",
+      "Value": 0,
+      "Unit": "Count"
+    },
+    {
+      "MetricName": "ResourceTime",
+      "Timestamp": "2025-04-24T10:47:21.773840",
+      "Value": 1.0171151161193848,
+      "Unit": "Seconds"
+    }
+  ]
+}

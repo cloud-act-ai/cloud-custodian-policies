@@ -1,0 +1,2 @@
+2025-04-28 08:51:56,519 - custodian.filters - INFO - No metrics found for compute.googleapis.com/instance/disk/read_ops_count.ALIGN_MEAN.REDUCE_MEAN
+2025-04-28 08:51:56,520 - custodian.policy - INFO - policy:gcp-vm-oversized-disks resource:gcp.instance region: count:0 time:0.51

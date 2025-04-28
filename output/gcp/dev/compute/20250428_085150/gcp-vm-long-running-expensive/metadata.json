@@ -1,0 +1,97 @@
+{
+  "policy": {
+    "name": "gcp-vm-long-running-expensive",
+    "resource": "gcp.instance",
+    "description": "Identifies expensive Google Compute Engine instances that have been running \nfor extended periods (more than 30 days). These might be candidates for\nreserved instances or custom instances to optimize costs.\n",
+    "filters": [
+      {
+        "type": "value",
+        "key": "status",
+        "value": "RUNNING"
+      },
+      {
+        "type": "value",
+        "key": "creationTimestamp",
+        "value_type": "age",
+        "op": "greater-than",
+        "value": 30
+      },
+      {
+        "or": [
+          {
+            "type": "value",
+            "key": "machineType",
+            "op": "regex",
+            "value": "n1-standard-8|n1-standard-16|n1-standard-32|n1-highmem-.*|n1-highcpu-.*"
+          },
+          {
+            "type": "value",
+            "key": "machineType",
+            "op": "regex",
+            "value": "n2-standard-8|n2-standard-16|n2-standard-32|n2-highmem-.*|n2-highcpu-.*"
+          },
+          {
+            "type": "value",
+            "key": "machineType",
+            "op": "regex",
+            "value": "c2-standard-.*|m1-.*|m2-.*"
+          }
+        ]
+      }
+    ]
+  },
+  "version": "0.9.44",
+  "execution": {
+    "id": "1e13c426-ea58-49b0-bbe4-6c1bb5f00929",
+    "start": 1745855516.523252,
+    "end_time": 1745855516.527466,
+    "duration": 0.004214048385620117
+  },
+  "config": {
+    "region": "",
+    "regions": [],
+    "cache": "~/.cache/cloud-custodian.cache",
+    "profile": null,
+    "account_id": null,
+    "assume_role": null,
+    "session_policy": null,
+    "external_id": null,
+    "log_group": null,
+    "tracer": null,
+    "metrics_enabled": null,
+    "metrics": null,
+    "output_dir": "output/gcp/dev/compute/20250428_085150",
+    "cache_period": 15,
+    "dryrun": true,
+    "authorization_file": null,
+    "subparser": "run",
+    "config": null,
+    "configs": [
+      "c7n_policies/gcp/dev/compute_policies.yaml"
+    ],
+    "policy_filters": [],
+    "resource_types": [],
+    "verbose": null,
+    "quiet": null,
+    "debug": false,
+    "skip_validation": false,
+    "command": "c7n.commands.run",
+    "vars": null
+  },
+  "sys-stats": {},
+  "api-stats": {},
+  "metrics": [
+    {
+      "MetricName": "ResourceCount",
+      "Timestamp": "2025-04-28T08:51:56.526642",
+      "Value": 0,
+      "Unit": "Count"
+    },
+    {
+      "MetricName": "ResourceTime",
+      "Timestamp": "2025-04-28T08:51:56.526653",
+      "Value": 0.002374887466430664,
+      "Unit": "Seconds"
+    }
+  ]
+}

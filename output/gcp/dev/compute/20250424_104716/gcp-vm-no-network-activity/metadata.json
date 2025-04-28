@@ -1,0 +1,97 @@
+{
+  "policy": {
+    "name": "gcp-vm-no-network-activity",
+    "resource": "gcp.instance",
+    "description": "Identifies Google Compute Engine instances with no network activity (ingress or egress).\nThese VMs might be unused or disconnected and are candidates for termination.\n",
+    "filters": [
+      {
+        "type": "value",
+        "key": "status",
+        "value": "RUNNING"
+      },
+      {
+        "type": "metrics",
+        "name": "compute.googleapis.com/instance/network/received_bytes_count",
+        "metric-key": "resource.labels.instance_id",
+        "days": 7,
+        "reducer": "REDUCE_SUM",
+        "aligner": "ALIGN_SUM",
+        "op": "less-than",
+        "value": 1000
+      },
+      {
+        "type": "metrics",
+        "name": "compute.googleapis.com/instance/network/sent_bytes_count",
+        "metric-key": "resource.labels.instance_id",
+        "days": 7,
+        "reducer": "REDUCE_SUM",
+        "aligner": "ALIGN_SUM",
+        "op": "less-than",
+        "value": 1000
+      },
+      {
+        "not": [
+          {
+            "type": "value",
+            "key": "labels.preserve",
+            "value": "true"
+          }
+        ]
+      }
+    ]
+  },
+  "version": "0.9.44",
+  "execution": {
+    "id": "8f5d24a3-3dde-434a-acd3-a4d5a48d2edd",
+    "start": 1745516841.7761018,
+    "end_time": 1745516842.284311,
+    "duration": 0.508209228515625
+  },
+  "config": {
+    "region": "",
+    "regions": [],
+    "cache": "~/.cache/cloud-custodian.cache",
+    "profile": null,
+    "account_id": null,
+    "assume_role": null,
+    "session_policy": null,
+    "external_id": null,
+    "log_group": null,
+    "tracer": null,
+    "metrics_enabled": null,
+    "metrics": null,
+    "output_dir": "output/gcp/dev/compute/20250424_104716",
+    "cache_period": 15,
+    "dryrun": true,
+    "authorization_file": null,
+    "subparser": "run",
+    "config": null,
+    "configs": [
+      "c7n_policies/gcp/dev/compute_policies.yaml"
+    ],
+    "policy_filters": [],
+    "resource_types": [],
+    "verbose": null,
+    "quiet": null,
+    "debug": false,
+    "skip_validation": false,
+    "command": "c7n.commands.run",
+    "vars": null
+  },
+  "sys-stats": {},
+  "api-stats": {},
+  "metrics": [
+    {
+      "MetricName": "ResourceCount",
+      "Timestamp": "2025-04-24T10:47:22.283974",
+      "Value": 0,
+      "Unit": "Count"
+    },
+    {
+      "MetricName": "ResourceTime",
+      "Timestamp": "2025-04-24T10:47:22.283986",
+      "Value": 0.5072638988494873,
+      "Unit": "Seconds"
+    }
+  ]
+}

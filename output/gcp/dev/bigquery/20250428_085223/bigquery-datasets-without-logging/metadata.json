@@ -1,0 +1,85 @@
+{
+  "policy": {
+    "description": "Identifies BigQuery datasets older than 30 days that do not have \ndata access logging enabled. Access logs are essential for monitoring \nusage patterns and security compliance.\n",
+    "filters": [
+      {
+        "key": "creationTime",
+        "op": "greater-than",
+        "type": "value",
+        "value": 30,
+        "value_type": "age"
+      },
+      {
+        "not": [
+          {
+            "key": "datasetReference.datasetId",
+            "op": "regex",
+            "type": "value",
+            "value": "^(temp|test).*"
+          }
+        ]
+      },
+      {
+        "key": "access_logs.logBigqueryAuditMetadata",
+        "type": "value",
+        "value": false
+      }
+    ],
+    "name": "bigquery-datasets-without-logging",
+    "resource": "gcp.bq-dataset"
+  },
+  "version": "0.9.44",
+  "execution": {
+    "id": "caa00659-1628-454e-b6f3-e9dd5137b290",
+    "start": 1745855548.4974442,
+    "end_time": 1745855548.4996521,
+    "duration": 0.0022079944610595703
+  },
+  "config": {
+    "region": "",
+    "regions": [],
+    "cache": "~/.cache/cloud-custodian.cache",
+    "profile": null,
+    "account_id": null,
+    "assume_role": null,
+    "session_policy": null,
+    "external_id": null,
+    "log_group": null,
+    "tracer": null,
+    "metrics_enabled": null,
+    "metrics": null,
+    "output_dir": "/Users/gurukallam/projects/finops360/cloud-custodian-policies/output/gcp/dev/bigquery/20250428_085223",
+    "cache_period": 15,
+    "dryrun": true,
+    "authorization_file": null,
+    "subparser": "run",
+    "config": null,
+    "configs": [
+      "/var/folders/2t/pq6d_3893yq39cjz9qc9j4qm0000gn/T/tmpgio7n5d3.yaml"
+    ],
+    "policy_filters": [],
+    "resource_types": [],
+    "verbose": null,
+    "quiet": null,
+    "debug": false,
+    "skip_validation": false,
+    "command": "c7n.commands.run",
+    "vars": null
+  },
+  "sys-stats": {},
+  "api-stats": {},
+  "metrics": [
+    {
+      "MetricName": "ResourceCount",
+      "Timestamp": "2025-04-28T08:52:28.499104",
+      "Value": 0,
+      "Unit": "Count"
+    },
+    {
+      "MetricName": "ResourceTime",
+      "Timestamp": "2025-04-28T08:52:28.499109",
+      "Value": 0.0010879039764404297,
+      "Unit": "Seconds"
+    }
+  ]
+}

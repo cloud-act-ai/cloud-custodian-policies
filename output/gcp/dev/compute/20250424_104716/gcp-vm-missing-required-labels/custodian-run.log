@@ -1,0 +1,1 @@
+2025-04-24 10:47:20,754 - custodian.policy - INFO - policy:gcp-vm-missing-required-labels resource:gcp.instance region: count:1 time:1.12

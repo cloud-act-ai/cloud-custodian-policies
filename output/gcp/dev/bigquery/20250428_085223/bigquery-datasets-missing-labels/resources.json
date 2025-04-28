@@ -1,0 +1,82 @@
+[
+  {
+    "kind": "bigquery#dataset",
+    "etag": "HnWnH18H8OwlG3+wcsFNfA==",
+    "id": "finops360-dev-2025:guru",
+    "selfLink": "https://bigquery.googleapis.com/bigquery/v2/projects/finops360-dev-2025/datasets/guru",
+    "datasetReference": {
+      "datasetId": "guru",
+      "projectId": "finops360-dev-2025"
+    },
+    "access": [
+      {
+        "role": "WRITER",
+        "specialGroup": "projectWriters"
+      },
+      {
+        "role": "OWNER",
+        "specialGroup": "projectOwners"
+      },
+      {
+        "role": "OWNER",
+        "userByEmail": "infra_team@cloudact.ai"
+      },
+      {
+        "role": "READER",
+        "specialGroup": "projectReaders"
+      }
+    ],
+    "creationTime": "1744378152167",
+    "lastModifiedTime": "1744378152167",
+    "location": "US",
+    "type": "DEFAULT",
+    "isCaseInsensitive": false,
+    "maxTimeTravelHours": "168",
+    "c7n:MatchedFilters": [
+      "labels",
+      "labels.env",
+      "labels.owner",
+      "labels.department"
+    ]
+  },
+  {
+    "kind": "bigquery#dataset",
+    "etag": "frU0tHZMGIbF9uWDghIhfA==",
+    "id": "finops360-dev-2025:test",
+    "selfLink": "https://bigquery.googleapis.com/bigquery/v2/projects/finops360-dev-2025/datasets/test",
+    "datasetReference": {
+      "datasetId": "test",
+      "projectId": "finops360-dev-2025"
+    },
+    "access": [
+      {
+        "role": "WRITER",
+        "specialGroup": "projectWriters"
+      },
+      {
+        "role": "OWNER",
+        "specialGroup": "projectOwners"
+      },
+      {
+        "role": "OWNER",
+        "userByEmail": "infra_team@cloudact.ai"
+      },
+      {
+        "role": "READER",
+        "specialGroup": "projectReaders"
+      }
+    ],
+    "creationTime": "1744207875271",
+    "lastModifiedTime": "1744207875271",
+    "location": "US",
+    "type": "DEFAULT",
+    "isCaseInsensitive": false,
+    "maxTimeTravelHours": "168",
+    "c7n:MatchedFilters": [
+      "labels",
+      "labels.env",
+      "labels.owner",
+      "labels.department"
+    ]
+  }
+]

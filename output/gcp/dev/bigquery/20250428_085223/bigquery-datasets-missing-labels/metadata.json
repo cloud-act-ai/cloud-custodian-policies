@@ -1,0 +1,87 @@
+{
+  "policy": {
+    "description": "Identifies BigQuery datasets that are missing required labels.\nRequired labels help with cost allocation, ownership tracking, and resource governance.\nThis policy checks for the absence of 'env', 'owner', and 'department' labels.\n",
+    "filters": [
+      {
+        "or": [
+          {
+            "key": "labels",
+            "type": "value",
+            "value": null
+          },
+          {
+            "key": "labels.env",
+            "type": "value",
+            "value": null
+          },
+          {
+            "key": "labels.owner",
+            "type": "value",
+            "value": null
+          },
+          {
+            "key": "labels.department",
+            "type": "value",
+            "value": null
+          }
+        ]
+      }
+    ],
+    "name": "bigquery-datasets-missing-labels",
+    "resource": "gcp.bq-dataset"
+  },
+  "version": "0.9.44",
+  "execution": {
+    "id": "32b33728-d66b-45da-9faf-25b9522d6ffa",
+    "start": 1745855548.492974,
+    "end_time": 1745855548.496345,
+    "duration": 0.003371000289916992
+  },
+  "config": {
+    "region": "",
+    "regions": [],
+    "cache": "~/.cache/cloud-custodian.cache",
+    "profile": null,
+    "account_id": null,
+    "assume_role": null,
+    "session_policy": null,
+    "external_id": null,
+    "log_group": null,
+    "tracer": null,
+    "metrics_enabled": null,
+    "metrics": null,
+    "output_dir": "/Users/gurukallam/projects/finops360/cloud-custodian-policies/output/gcp/dev/bigquery/20250428_085223",
+    "cache_period": 15,
+    "dryrun": true,
+    "authorization_file": null,
+    "subparser": "run",
+    "config": null,
+    "configs": [
+      "/var/folders/2t/pq6d_3893yq39cjz9qc9j4qm0000gn/T/tmpgio7n5d3.yaml"
+    ],
+    "policy_filters": [],
+    "resource_types": [],
+    "verbose": null,
+    "quiet": null,
+    "debug": false,
+    "skip_validation": false,
+    "command": "c7n.commands.run",
+    "vars": null
+  },
+  "sys-stats": {},
+  "api-stats": {},
+  "metrics": [
+    {
+      "MetricName": "ResourceCount",
+      "Timestamp": "2025-04-28T08:52:28.495734",
+      "Value": 2,
+      "Unit": "Count"
+    },
+    {
+      "MetricName": "ResourceTime",
+      "Timestamp": "2025-04-28T08:52:28.495741",
+      "Value": 0.0019402503967285156,
+      "Unit": "Seconds"
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+2025-04-28 08:52:28,489 - custodian.policy - INFO - policy:bigquery-tables-not-accessed-30days resource:gcp.bq-table region: count:0 time:4.29
